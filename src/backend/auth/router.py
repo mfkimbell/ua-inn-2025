@@ -4,16 +4,17 @@ from datetime import timedelta
 
 import jwt
 import sqlalchemy
+from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
 from backend.auth.constants import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.auth.database import get_db
 from backend.auth.jwt_handler import JwtHandler
 from backend.auth.models import APIKey, BaseUser, User
 from backend.auth.user_manager import UserManager
 from backend.logger import LOG
-from fastapi import APIRouter, Depends, Header, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -31,6 +32,7 @@ async def login(
             "username": user.username,
             "email": user.email,
             "credits": user.credits,
+            "role": user.role,
         },
         expires_delta=access_token_expires,
     )
