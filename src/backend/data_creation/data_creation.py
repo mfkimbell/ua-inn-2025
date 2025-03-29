@@ -12,6 +12,7 @@ fake = Faker()
 def create_test_users(db: Session) -> None:
     if not db.query(User).filter(User.username == "admin").first():
         admin_user = User(
+            id=997,
             username="admin",
             email="admin@cgi.com",
             hashed_password=hashlib.sha256("admin".encode()).hexdigest(),
@@ -22,6 +23,7 @@ def create_test_users(db: Session) -> None:
 
     if not db.query(User).filter(User.username == "hr").first():
         hr_user = User(
+            id=998,
             username="hr",
             email="hr@cgi.com",
             hashed_password=hashlib.sha256("hr".encode()).hexdigest(),
@@ -32,6 +34,7 @@ def create_test_users(db: Session) -> None:
 
     if not db.query(User).filter(User.username == "employee").first():
         employee_user = User(
+            id=999,
             username="employee",
             email="employee@cgi.com",
             hashed_password=hashlib.sha256("employee".encode()).hexdigest(),
@@ -112,7 +115,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
     if not requests:
         for _ in range(num_records):
             request = Request(
-                user_id=choice(users).id,
+                user_id=999,
                 request=fake.text(max_nb_chars=200),
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
