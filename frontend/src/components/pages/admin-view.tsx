@@ -193,10 +193,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-[#E31937]">Work</span>
-            <span className="text-2xl font-bold text-gray-900">Sync</span>
-          </div>
+          <img
+            src="/worksync_logo.png"
+            alt="WorkSync Logo"
+            className="w-25 h-10"
+          />
           <div className="flex items-center space-x-4">
             <button className="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100">
               <Bell size={24} />

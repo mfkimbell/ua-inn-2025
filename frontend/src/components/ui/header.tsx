@@ -23,10 +23,11 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold text-[#E31937]">Work</span>
-              <span className="text-3xl font-bold text-gray-900">Sync</span>
-            </div>
+            <img
+              src="/worksync_logo.png"
+              alt="WorkSync Logo"
+              className="w-25 h-10"
+            />
           </div>
           <div className="-mr-2 -my-2 md:hidden">
             <button
