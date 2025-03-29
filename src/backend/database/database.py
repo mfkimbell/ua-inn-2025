@@ -5,11 +5,20 @@ from sqlalchemy.orm import Session
 from backend.auth.models import User
 
 
-def read_from_db(db: Session, user: User, model: Any) -> Any:
+def read_from_db(db: Session, user: User, model: Any, sort: bool = False) -> Any:
+    if sort:
+        return (
+            db.query(model)
+            .filter(model.user_id == user.id)
+            .order_by(model.created_at.desc())
+            .all()
+        )
     return db.query(model).filter(model.user_id == user.id).all()
 
 
-def read_all_from_db(db: Session, model: Any) -> Any:
+def read_all_from_db(db: Session, model: Any, sort: bool = False) -> Any:
+    if sort:
+        return db.query(model).order_by(model.created_at.desc()).all()
     return db.query(model).all()
 
 

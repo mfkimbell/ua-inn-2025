@@ -171,7 +171,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <img
+          <img
             src="/worksync_logo.png"
             alt="WorkSync Logo"
             className="w-25 h-9"

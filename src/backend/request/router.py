@@ -51,7 +51,7 @@ async def get_all_requests(
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    return read_all_from_db(db, DatabaseRequest)
+    return read_all_from_db(db, DatabaseRequest, sort=True)
 
 
 @router.post("/request")
