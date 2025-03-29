@@ -47,5 +47,6 @@ export const parseServerRequest = (
     cost: request.cost,
     requestedAmount: request.requested_amount,
     orderedAmount: request.ordered_amount,
+    itemName: request.item_name,
   }));
 };

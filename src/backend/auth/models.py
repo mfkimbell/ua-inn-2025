@@ -95,6 +95,7 @@ class Request(Base):
     cost = Column(Float)
     requested_amount = Column(Integer)
     ordered_amount = Column(Integer)
+    item_name = Column(String)
 
 
 @final
