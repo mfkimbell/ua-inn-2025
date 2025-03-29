@@ -1,107 +1,123 @@
 // AdminView.tsx
 import { useState } from "react";
 import Head from "next/head";
-import { Bell, UserCircle, Plus, ChevronDown, Trash2 } from "lucide-react";
-import RequestModal from "@/components/ui/requests-modal";
+import {
+  Bell,
+  UserCircle,
+  Plus,
+  ChevronDown,
+  Trash2,
+  Box,
+  FileText,
+  Wrench,
+} from "lucide-react";
+import RequestModal from "@/components/ui/request-modal";
 import SuggestionModal from "@/components/ui/suggestion-modal";
-import OrderModal from "@/components/ui/order-modal";
-import { Box, FileText, Wrench } from "lucide-react";
 import AuthButton from "../auth/button";
 import { Product } from "@/types/product.types";
+import { Status } from "@/types/status.enum";
 
-export interface Request {
-  id?: number;
-  user_id: number;
+// New Request type
+export type Request = {
+  id: number;
+  status: Status;
+  userId: number;
   request: string;
-  type: "supply" | "maintenance" | "suggestion";
-  order_id?: number;
-  created_at: string;
-  updated_at: string;
-  comments: string;
-  is_anonymous: boolean;
-  user_name: string;
-}
-
-export interface Suggestion {
-  id?: number;
-  user_id: number;
-  suggestion: string;
-  created_at: string;
-  updated_at: string;
-  completed_at?: string;
-  comments: string;
-  is_anonymous: boolean;
-  user_name: string;
-}
-
-export interface Order {
-  id?: number;
-  user_id: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  completed_at?: string;
-  comments: string;
+  requestType: string;
+  orderId: number;
+  createdAt: string;
+  updatedAt: string;
+  userName: string;
+  admin: number;
+  adminName: string;
   cost: number;
-  user_name: string;
-}
+  requestedAmount: number;
+  orderedAmount: number;
+  itemName: string;
+};
+
+// New Suggestion type
+export type Suggestion = {
+  id: number;
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string;
+  suggestion: string;
+  comments: string;
+  userName: string;
+  isAnonymous: boolean;
+};
+
+export type PageProps = {
+  products: Product[];
+};
 
 // Sample data arrays for demonstration
 const sampleRequests: Request[] = [
   {
     id: 1,
-    user_id: 1,
-    request: "Request new supplies",
-    type: "supply",
-    order_id: 0,
-    created_at: "2025-03-25",
-    updated_at: "2025-03-25",
-    comments: "",
-    is_anonymous: false,
-    user_name: "Alice",
+    status: Status.PENDING,
+    userId: 1,
+    request: "Request new office supplies",
+    requestType: "supply",
+    orderId: 0,
+    createdAt: "2025-03-25",
+    updatedAt: "2025-03-25",
+    userName: "Alice",
+    admin: 0,
+    adminName: "",
+    cost: 0,
+    requestedAmount: 10,
+    orderedAmount: 0,
+    itemName: "Printer Paper",
   },
   {
     id: 2,
-    user_id: 2,
+    status: Status.APPROVED,
+    userId: 2,
     request: "Fix the printer",
-    type: "maintenance",
-    order_id: 0,
-    created_at: "2025-03-20",
-    updated_at: "2025-03-21",
-    comments: "",
-    is_anonymous: true,
-    user_name: "Bob",
+    requestType: "maintenance",
+    orderId: 0,
+    createdAt: "2025-03-20",
+    updatedAt: "2025-03-21",
+    userName: "Bob",
+    admin: 1,
+    adminName: "Admin1",
+    cost: 50,
+    requestedAmount: 1,
+    orderedAmount: 1,
+    itemName: "Ink Cartridge",
   },
 ];
 
 const sampleSuggestions: Suggestion[] = [
   {
     id: 1,
-    user_id: 1,
-    suggestion: "Upgrade coffee machine",
-    created_at: "2025-03-15",
-    updated_at: "2025-03-15",
+    userId: 1,
+    createdAt: "2025-03-15",
+    updatedAt: "2025-03-15",
+    completedAt: "2025-03-16",
+    suggestion: "Upgrade the coffee machine",
     comments: "",
-    is_anonymous: false,
-    user_name: "Alice",
+    userName: "Alice",
+    isAnonymous: false,
   },
-];
-
-const sampleOrders: Order[] = [
   {
-    id: 1,
-    user_id: 1,
-    status: "pending",
-    created_at: "2025-03-25",
-    updated_at: "2025-03-25",
+    id: 2,
+    userId: 2,
+    createdAt: "2025-03-10",
+    updatedAt: "2025-03-11",
+    completedAt: "",
+    suggestion: "Add a relaxation room",
     comments: "",
-    cost: 150,
-    user_name: "John Doe",
+    userName: "Bob",
+    isAnonymous: true,
   },
 ];
 
-// Helper functions for type icons and status colors
-const getTypeIcon = (type: "supply" | "maintenance" | "suggestion") => {
+// Helper to display request type icons
+const getTypeIcon = (type: string) => {
   switch (type) {
     case "supply":
       return <Box size={20} className="text-[#E31937]" />;
@@ -129,39 +145,23 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export type PageProps = {
-  products: Product[];
-};
-
 const AdminView: React.FC<PageProps> = ({ products }) => {
-  const [activeTab, setActiveTab] = useState<
-    "requests" | "suggestions" | "orders"
-  >("requests");
+  const [activeTab, setActiveTab] = useState<"requests" | "suggestions">("requests");
 
   const [requests, setRequests] = useState<Request[]>(sampleRequests);
-  const [suggestions, setSuggestions] =
-    useState<Suggestion[]>(sampleSuggestions);
-  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(sampleSuggestions);
 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
-  const [showOrderModal, setShowOrderModal] = useState(false);
 
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
-  const [selectedSuggestion, setSelectedSuggestion] =
-    useState<Suggestion | null>(null);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<Suggestion | null>(null);
 
-  const handleDelete = (
-    type: "request" | "suggestion" | "order",
-    id: number
-  ) => {
+  const handleDelete = (type: "request" | "suggestion", id: number) => {
     if (type === "request") {
       setRequests((prev) => prev.filter((item) => item.id !== id));
     } else if (type === "suggestion") {
       setSuggestions((prev) => prev.filter((item) => item.id !== id));
-    } else if (type === "order") {
-      setOrders((prev) => prev.filter((item) => item.id !== id));
     }
   };
 
@@ -224,18 +224,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
               New Suggestion
             </button>
           )}
-          {activeTab === "orders" && (
-            <button
-              onClick={() => {
-                setSelectedOrder(null);
-                setShowOrderModal(true);
-              }}
-              className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
-            >
-              <Plus size={20} className="mr-2" />
-              New Order
-            </button>
-          )}
         </div>
 
         <div className="border-b border-gray-200 mb-6">
@@ -260,20 +248,10 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             >
               Suggestions
             </button>
-            <button
-              onClick={() => setActiveTab("orders")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === "orders"
-                  ? "border-[#E31937] text-[#E31937]"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Orders
-            </button>
           </nav>
         </div>
 
-        {/* Requests Tab */}
+        {/* Requests List */}
         {activeTab === "requests" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {requests.map((req) => (
@@ -283,28 +261,41 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center">
-                    {getTypeIcon(req.type)}
+                    {getTypeIcon(req.requestType)}
                     <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
-                      {req.type}
+                      {req.requestType}
                     </span>
                   </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      "pending"
+                      req.status
                     )}`}
                   >
-                    pending
+                    {req.status}
                   </span>
                 </div>
                 <p className="text-lg font-medium text-gray-900 mb-2">
                   {req.request}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
-                  Submitted by: {req.is_anonymous ? "anonymous" : req.user_name}
+                  Submitted by: {req.userName}
                 </p>
+                <p className="text-sm text-gray-700 mb-2">
+                  Item: {req.itemName}
+                </p>
+                {req.cost > 0 && (
+                  <p className="text-sm text-gray-700 mb-2">
+                    Cost: ${req.cost}
+                  </p>
+                )}
+                {req.adminName && (
+                  <p className="text-sm text-gray-700 mb-2">
+                    Admin: {req.adminName}
+                  </p>
+                )}
                 <div className="mt-4 text-xs text-gray-500">
-                  <div>Created: {req.created_at}</div>
-                  <div>Updated: {req.updated_at}</div>
+                  <div>Created: {req.createdAt}</div>
+                  <div>Updated: {req.updatedAt}</div>
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <button
@@ -318,7 +309,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   </button>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleDelete("request", req.id!)}
+                      onClick={() => handleDelete("request", req.id)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 size={18} />
@@ -330,7 +321,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           </div>
         )}
 
-        {/* Suggestions Tab */}
+        {/* Suggestions List */}
         {activeTab === "suggestions" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {suggestions.map((sugg) => (
@@ -349,9 +340,12 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                 <p className="text-lg font-medium text-gray-900 mb-2">
                   {sugg.suggestion}
                 </p>
+                <p className="text-sm text-gray-700 mb-2">
+                  Submitted by: {sugg.isAnonymous ? "anonymous" : sugg.userName}
+                </p>
                 <div className="mt-4 text-xs text-gray-500">
-                  <div>Created: {sugg.created_at}</div>
-                  <div>Updated: {sugg.updated_at}</div>
+                  <div>Created: {sugg.createdAt}</div>
+                  <div>Updated: {sugg.updatedAt}</div>
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <button
@@ -365,57 +359,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   </button>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleDelete("suggestion", sugg.id!)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Orders Tab */}
-        {activeTab === "orders" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {orders.map((order) => (
-              <div
-                key={order.id}
-                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs uppercase text-gray-500 font-medium">
-                    Order ID: {order.id}
-                  </span>
-                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    {order.status}
-                  </span>
-                </div>
-                <p className="text-lg font-medium text-gray-900 mb-2">
-                  User: {order.user_name}
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  Cost: ${order.cost}
-                </p>
-                <div className="mt-4 text-xs text-gray-500">
-                  <div>Created: {order.created_at}</div>
-                  <div>Updated: {order.updated_at}</div>
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setShowOrderModal(true);
-                    }}
-                    className="text-[#E31937] hover:text-[#c01731] text-sm font-medium flex items-center"
-                  >
-                    View Details
-                  </button>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleDelete("order", order.id!)}
+                      onClick={() => handleDelete("suggestion", sugg.id)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 size={18} />
@@ -428,26 +372,25 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
         )}
       </main>
 
-      {/* Modals for CRUD operations */}
+      {/* Modals */}
       {showRequestModal && (
         <RequestModal
           request={selectedRequest}
+          products={products}
           onClose={() => setShowRequestModal(false)}
           onSave={(updatedRequest) => {
             if (selectedRequest) {
-              // Update existing request
               setRequests((prev) =>
                 prev.map((req) =>
                   req.id === updatedRequest.id ? updatedRequest : req
                 )
               );
             } else {
-              // Create new request (assign a new id)
               setRequests((prev) => [
                 ...prev,
                 {
                   ...updatedRequest,
-                  id: prev.length ? prev[prev.length - 1].id! + 1 : 1,
+                  id: prev.length ? prev[prev.length - 1].id + 1 : 1,
                 },
               ]);
             }
@@ -472,36 +415,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                 ...prev,
                 {
                   ...updatedSuggestion,
-                  id: prev.length ? prev[prev.length - 1].id! + 1 : 1,
+                  id: prev.length ? prev[prev.length - 1].id + 1 : 1,
                 },
               ]);
             }
             setShowSuggestionModal(false);
-          }}
-        />
-      )}
-
-      {showOrderModal && (
-        <OrderModal
-          order={selectedOrder}
-          onClose={() => setShowOrderModal(false)}
-          onSave={(updatedOrder) => {
-            if (selectedOrder) {
-              setOrders((prev) =>
-                prev.map((ord) =>
-                  ord.id === updatedOrder.id ? updatedOrder : ord
-                )
-              );
-            } else {
-              setOrders((prev) => [
-                ...prev,
-                {
-                  ...updatedOrder,
-                  id: prev.length ? prev[prev.length - 1].id! + 1 : 1,
-                },
-              ]);
-            }
-            setShowOrderModal(false);
           }}
         />
       )}
