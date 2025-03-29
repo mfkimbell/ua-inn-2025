@@ -1,12 +1,35 @@
 import hashlib
+import json
+import os
 from random import choice, randint
 
 from faker import Faker
 from sqlalchemy.orm import Session
 
-from backend.auth.models import Order, Request, Suggestion, User
+from backend.auth.models import Order, Product, Request, Suggestion, User
 
 fake = Faker()
+
+
+def insert_test_data(db: Session):
+    for file in os.listdir("data"):
+        with open(os.path.join("data", file), "r") as f:
+            print(f"Inserting data from {file}")
+            data = json.load(f)
+            for product in data["products"]:
+                db.add(
+                    Product(
+                        id=product["id"],
+                        title=product["title"],
+                        description=product["description"],
+                        category=product["category"],
+                        price=product["price"],
+                        stock=product["stock"],
+                        thumbnail=product["thumbnail"],
+                    )
+                )
+
+            db.commit()
 
 
 def create_test_users(db: Session) -> None:

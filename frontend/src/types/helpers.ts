@@ -45,5 +45,7 @@ export const parseServerRequest = (
     requestType: request.request_type,
     adminName: request.admin_name,
     cost: request.cost,
+    requestedAmount: request.requested_amount,
+    orderedAmount: request.ordered_amount,
   }));
 };

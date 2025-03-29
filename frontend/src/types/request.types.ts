@@ -13,6 +13,8 @@ export type ServerRequest = {
   admin: number;
   admin_name: string;
   cost: number;
+  requested_amount: number;
+  ordered_amount: number;
 };
 
 export type Request = {
@@ -28,4 +30,6 @@ export type Request = {
   admin: number;
   adminName: string;
   cost: number;
+  requestedAmount: number;
+  orderedAmount: number;
 };

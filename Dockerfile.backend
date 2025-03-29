@@ -27,4 +27,6 @@ COPY src ./src
 
 RUN pdm install
 
+COPY data ./data
+
 COPY start.sh ./start.sh

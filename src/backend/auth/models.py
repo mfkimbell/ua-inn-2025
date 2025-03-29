@@ -93,6 +93,20 @@ class Request(Base):
     admin = Column(Integer, ForeignKey("user.id"))
     admin_name = Column(String, ForeignKey("user.first_name"))
     cost = Column(Float)
+    requested_amount = Column(Integer)
+    ordered_amount = Column(Integer)
+
+
+@final
+class Product(Base):
+    __tablename__ = "product"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    category = Column(String)
+    price = Column(Float)
+    stock = Column(Integer)
+    thumbnail = Column(String)
 
 
 Base.metadata.create_all(bind=engine)
