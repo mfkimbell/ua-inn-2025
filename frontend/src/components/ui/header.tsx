@@ -26,7 +26,7 @@ const Header = () => {
             <img
               src="/worksync_logo.png"
               alt="WorkSync Logo"
-              className="w-25 h-10"
+              className="w-25 h-9"
             />
           </div>
           <div className="-mr-2 -my-2 md:hidden">
