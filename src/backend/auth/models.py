@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import final
 
 from pydantic import BaseModel
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
 
 from backend.auth.database import Base, engine
 
@@ -68,7 +68,7 @@ class Suggestion(Base):
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)
     comments = Column(String)
-
+    is_anonymous = Column(Boolean, default=False)
 @final
 class Request(Base):
     __tablename__ = "request"
@@ -79,6 +79,7 @@ class Request(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     comments = Column(String)
+    is_anonymous = Column(Boolean, default=False)
 
 
 Base.metadata.create_all(bind=engine)
