@@ -113,8 +113,8 @@ const RequestModal: React.FC<RequestModalProps> = ({
               >
                 <option value="">Select an item</option>
                 {products.map((product) => (
-                  <option key={product.id} value={product.name}>
-                    {product.name}
+                  <option key={product.id} value={product.title}>
+                    {product.title}
                   </option>
                 ))}
               </select>
