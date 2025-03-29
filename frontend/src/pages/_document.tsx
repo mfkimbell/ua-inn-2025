@@ -8,8 +8,7 @@ export default function Document() {
           href="https://fonts.googleapis.com/css?family=Anonymous+Pro"
           rel="stylesheet"
         />
-        <title>WorkSync</title>
-        <meta name="description" content="WorkSync internal platform login" />
+        <meta name="description" content="WorkSync" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className="antialiased">

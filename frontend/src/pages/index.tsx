@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import LandingPage from "@/components/pages/landing-page";
 import { LoggedInUser } from "@/components/pages/logged-in-user";
 import useUser from "@/hooks/useUser";
+import EmployeeView from "@/components/pages/employee-view";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -12,13 +13,14 @@ export default function Home() {
     return <LandingPage />;
   }
 
-  if (user?.role === "admin") {
-    return <AdminView />;
-  }
+  // if (user?.role === "admin") {
+  //   return <AdminView />;
+  // }
 
   // if (user?.role === "employee") {
   //   return 
   // }
 
-  return <LoggedInUser />;
+  // return <LoggedInUser />;
+  return <EmployeeView />;
 }
