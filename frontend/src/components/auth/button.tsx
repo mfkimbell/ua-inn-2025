@@ -13,7 +13,7 @@ export default function AuthButton({ toggleAuthModal }: AuthButtonProps) {
     return (
       <button
         onClick={() => toggleAuthModal()}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-6 rounded-md transition-colors"
       >
         Sign In
       </button>

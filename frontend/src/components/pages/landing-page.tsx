@@ -1,16 +1,7 @@
-import Head from 'next/head';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Head>
-        <title>WorkSync | Internal Login</title>
-        <meta name="description" content="WorkSync internal platform login" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex flex-col md:flex-row gap-12 items-center">
           <div className="md:w-1/2">
