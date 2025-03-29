@@ -10,33 +10,36 @@ fake = Faker()
 
 
 def create_test_users(db: Session) -> None:
-    admin_user = User(
-        username="admin",
-        email="admin@cgi.com",
-        hashed_password=hashlib.sha256("admin".encode()).hexdigest(),
-        credits=randint(0, 100),
-        role="admin",
-    )
+    if not db.query(User).filter(User.username == "admin").first():
+        admin_user = User(
+            username="admin",
+            email="admin@cgi.com",
+            hashed_password=hashlib.sha256("admin".encode()).hexdigest(),
+            credits=randint(0, 100),
+            role="admin",
+        )
+        db.add(admin_user)
 
-    hr_user = User(
-        username="hr",
-        email="hr@cgi.com",
-        hashed_password=hashlib.sha256("hr".encode()).hexdigest(),
-        credits=randint(0, 100),
-        role="hr",
-    )
+    if not db.query(User).filter(User.username == "hr").first():
+        hr_user = User(
+            username="hr",
+            email="hr@cgi.com",
+            hashed_password=hashlib.sha256("hr".encode()).hexdigest(),
+            credits=randint(0, 100),
+            role="hr",
+        )
+        db.add(hr_user)
 
-    employee_user = User(
-        username="employee",
-        email="employee@cgi.com",
-        hashed_password=hashlib.sha256("employee".encode()).hexdigest(),
-        credits=randint(0, 100),
-        role="employee",
-    )
+    if not db.query(User).filter(User.username == "employee").first():
+        employee_user = User(
+            username="employee",
+            email="employee@cgi.com",
+            hashed_password=hashlib.sha256("employee".encode()).hexdigest(),
+            credits=randint(0, 100),
+            role="employee",
+        )
+        db.add(employee_user)
 
-    db.add(admin_user)
-    db.add(hr_user)
-    db.add(employee_user)
     db.commit()
 
 

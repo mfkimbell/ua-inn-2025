@@ -1,4 +1,6 @@
+import datetime
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from backend.auth.database import get_db
@@ -15,6 +17,17 @@ from backend.database.database import (
 router = APIRouter()
 
 
+class RequestRequest(BaseModel):
+    id: int | None = None
+    user_id: int | None = None
+    user_name: str | None = None
+    request: str | None = None
+    order_id: int | None = None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
+    completed_at: datetime.datetime | None = None
+    comments: str | None = None
+
 @router.get("/request")
 async def get_request(
     user: User = Depends(UserManager.get_user_from_header),
@@ -25,18 +38,19 @@ async def get_request(
 
 @router.post("/request")
 async def create_request(
-    request: DatabaseRequest,
+    request: RequestRequest,
     user: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    request.user_id = user.id  # pyright: ignore[reportAttributeAccessIssue]
+    request.user_id = user.id
+    request.user_name = user.first_name
 
     return create_record(db, DatabaseRequest, request.model_dump())
 
 
 @router.put("/request")
 async def update_request(
-    request: DatabaseRequest,
+    request: RequestRequest,
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
