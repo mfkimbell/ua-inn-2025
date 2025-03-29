@@ -7,6 +7,7 @@ import SuggestionModal from "@/components/ui/suggestion-modal";
 import OrderModal from "@/components/ui/order-modal";
 import { Box, FileText, Wrench } from "lucide-react";
 import AuthButton from "../auth/button";
+import { Product } from "@/types/product.types";
 
 export interface Request {
   id?: number;
@@ -128,7 +129,11 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const AdminView: React.FC = () => {
+export type PageProps = {
+  products: Product[];
+};
+
+const AdminView: React.FC<PageProps> = ({ products }) => {
   const [activeTab, setActiveTab] = useState<
     "requests" | "suggestions" | "orders"
   >("requests");
