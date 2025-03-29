@@ -25,6 +25,7 @@ def update_record(db: Session, model: Any, data: Any) -> Any:
     db_model = db.query(model).filter(model.id == data["id"]).first()
 
     if db_model:
+        print(data)
         for key, value in data.items():
             setattr(db_model, key, value)
 

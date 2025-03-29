@@ -146,6 +146,8 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
     requests = db.query(Request).all()
     if not requests:
         for _ in range(num_records):
+            product = choice(db.query(Product).all()).title
+
             request = Request(
                 user_id=999,
                 request=fake.text(max_nb_chars=20),
@@ -154,6 +156,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 user_name=choice(users).username,
                 request_type=choice(["maintenance", "supply"]),
                 status=choice(["pending", "approved", "denied", "delivered"]),
+                item_name=product,
             )
 
             request.updated_at = fake.date_time_between(start_date=request.created_at)

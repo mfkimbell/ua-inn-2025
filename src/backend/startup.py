@@ -8,6 +8,6 @@ from backend.data_creation.data_creation import (
 
 def on_startup():
     db = next(get_db())
-    create_fake_data(db, 50)
     create_test_users(db)
     insert_test_data(db)
+    create_fake_data(db, 50)

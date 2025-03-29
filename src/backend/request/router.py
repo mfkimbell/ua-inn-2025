@@ -29,7 +29,14 @@ class RequestRequest(BaseModel):
     updated_at: datetime.datetime | None = None
     completed_at: datetime.datetime | None = None
     comments: str | None = None
-
+    status: str | None = None
+    request_type: str | None = None
+    admin: int | None = None
+    admin_name: str | None = None
+    cost: float | None = None
+    requested_amount: int | None = None
+    ordered_amount: int | None = None
+    item_name: str | None = None
 
 @router.get("/request")
 async def get_request(
