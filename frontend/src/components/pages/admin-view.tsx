@@ -1,5 +1,6 @@
 // AdminView.tsx
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import Head from "next/head";
 import {
   Bell,
@@ -425,8 +426,14 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   </p>
                 )}
                 <div className="mt-4 text-xs text-gray-500">
-                  <div>Created: {req.createdAt}</div>
-                  <div>Updated: {req.updatedAt}</div>
+                  <div>
+                    Created:{" "}
+                    {dayjs(req.createdAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
+                  <div>
+                    Updated:{" "}
+                    {dayjs(req.updatedAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <button
