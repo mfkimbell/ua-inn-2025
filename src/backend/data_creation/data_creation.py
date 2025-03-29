@@ -15,21 +15,26 @@ def insert_test_data(db: Session):
     for file in os.listdir("data"):
         with open(os.path.join("data", file), "r") as f:
             print(f"Inserting data from {file}")
-            data = json.load(f)
-            for product in data["products"]:
-                db.add(
-                    Product(
-                        id=product["id"],
-                        title=product["title"],
-                        description=product["description"],
-                        category=product["category"],
-                        price=product["price"],
-                        stock=product["stock"],
-                        thumbnail=product["thumbnail"],
-                    )
-                )
+            try:
+                data = json.load(f)
 
-            db.commit()
+                for product in data["products"]:
+                    db.add(
+                        Product(
+                            id=product["id"],
+                            title=product["title"],
+                            description=product["description"],
+                            category=product["category"],
+                            price=product["price"],
+                            stock=product["stock"],
+                            thumbnail=product["thumbnail"],
+                        )
+                    )
+
+                db.commit()
+            except json.JSONDecodeError:
+                print(f"Error decoding JSON from {file}")
+                continue
 
 
 def create_test_users(db: Session) -> None:
