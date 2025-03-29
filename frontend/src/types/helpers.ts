@@ -50,3 +50,20 @@ export const parseServerRequest = (
     itemName: request.item_name,
   }));
 };
+
+export const parseClientRequest = (clientRequest: Request): ServerRequest => {
+  return {
+    ...clientRequest,
+    user_id: clientRequest.userId,
+    user_name: clientRequest.userName,
+    request_type: clientRequest.requestType,
+    order_id: clientRequest.orderId,
+    created_at: clientRequest.createdAt,
+    updated_at: clientRequest.updatedAt,
+    admin_name: clientRequest.adminName,
+    cost: clientRequest.cost,
+    requested_amount: clientRequest.requestedAmount,
+    ordered_amount: clientRequest.orderedAmount,
+    item_name: clientRequest.itemName,
+  };
+};

@@ -19,17 +19,22 @@ def insert_test_data(db: Session):
                 data = json.load(f)
 
                 for product in data["products"]:
-                    db.add(
-                        Product(
-                            id=product["id"],
-                            title=product["title"],
-                            description=product["description"],
-                            category=product["category"],
-                            price=product["price"],
-                            stock=product["stock"],
-                            thumbnail=product["thumbnail"],
+                    if (
+                        not db.query(Product)
+                        .filter(Product.id == product["id"])
+                        .first()
+                    ):
+                        db.add(
+                            Product(
+                                id=product["id"],
+                                title=product["title"],
+                                description=product["description"],
+                                category=product["category"],
+                                price=product["price"],
+                                stock=product["stock"],
+                                thumbnail=product["thumbnail"],
+                            )
                         )
-                    )
 
                 db.commit()
             except json.JSONDecodeError:
@@ -150,6 +155,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 request_type=choice(["maintenance", "supply"]),
                 status=choice(["pending", "approved", "denied", "delivered"]),
             )
+
             request.updated_at = fake.date_time_between(start_date=request.created_at)
             db.add(request)
         db.commit()

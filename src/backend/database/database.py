@@ -22,10 +22,12 @@ def create_record(db: Session, model: Any, data: Any) -> Any:
 
 
 def update_record(db: Session, model: Any, data: Any) -> Any:
-    db_model = db.query(model).filter(f"{model.user_id} == {data.user_id}").first()
+    db_model = db.query(model).filter(model.id == data["id"]).first()
 
     if db_model:
-        db_model.update(data)
+        for key, value in data.items():
+            setattr(db_model, key, value)
+
         db.commit()
         db.refresh(db_model)
 
@@ -33,7 +35,7 @@ def update_record(db: Session, model: Any, data: Any) -> Any:
 
 
 def delete_record(db: Session, model: Any, id: int) -> Any:
-    db_model = db.query(model).filter(f"{model.id} == {id}").first()
+    db_model = db.query(model).filter(model.id == id).first()
 
     if db_model:
         db.delete(db_model)

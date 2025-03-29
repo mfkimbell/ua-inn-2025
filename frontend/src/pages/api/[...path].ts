@@ -42,11 +42,17 @@ export default async function handler(
       forwardedBody = undefined;
     }
 
+    if (method === "PUT") {
+      forwardedBody = body.data;
+    }
+
     if (jwt?.access_token) {
       headers.set("Authorization", `Bearer ${jwt.access_token}`);
     }
 
     let response;
+
+    console.log(forwardedBody);
 
     try {
       response = await api.request({

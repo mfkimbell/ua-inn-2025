@@ -1,5 +1,5 @@
 // AdminView.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import {
   Bell,
@@ -16,38 +16,9 @@ import SuggestionModal from "@/components/ui/suggestion-modal";
 import AuthButton from "../auth/button";
 import { Product } from "@/types/product.types";
 import { Status } from "@/types/status.enum";
-
-// New Request type
-export type Request = {
-  id: number;
-  status: Status;
-  userId: number;
-  request: string;
-  requestType: string;
-  orderId: number;
-  createdAt: string;
-  updatedAt: string;
-  userName: string;
-  admin: number;
-  adminName: string;
-  cost: number;
-  requestedAmount: number;
-  orderedAmount: number;
-  itemName: string;
-};
-
-// New Suggestion type
-export type Suggestion = {
-  id: number;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-  completedAt: string;
-  suggestion: string;
-  comments: string;
-  userName: string;
-  isAnonymous: boolean;
-};
+import { RequestService } from "@/lib/request-service";
+import { Request } from "@/types/request.types";
+import { Suggestion } from "@/types/suggestion.types";
 
 export type PageProps = {
   products: Product[];
@@ -71,6 +42,7 @@ const sampleRequests: Request[] = [
     requestedAmount: 10,
     orderedAmount: 0,
     itemName: "Printer Paper",
+    comments: "",
   },
   {
     id: 2,
@@ -88,6 +60,7 @@ const sampleRequests: Request[] = [
     requestedAmount: 1,
     orderedAmount: 1,
     itemName: "Ink Cartridge",
+    comments: "",
   },
 ];
 
@@ -146,16 +119,20 @@ const getStatusColor = (status: string) => {
 };
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
-  const [activeTab, setActiveTab] = useState<"requests" | "suggestions">("requests");
+  const [activeTab, setActiveTab] = useState<"requests" | "suggestions">(
+    "requests"
+  );
 
-  const [requests, setRequests] = useState<Request[]>(sampleRequests);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(sampleSuggestions);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [suggestions, setSuggestions] =
+    useState<Suggestion[]>(sampleSuggestions);
 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
 
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
-  const [selectedSuggestion, setSelectedSuggestion] = useState<Suggestion | null>(null);
+  const [selectedSuggestion, setSelectedSuggestion] =
+    useState<Suggestion | null>(null);
 
   const handleDelete = (type: "request" | "suggestion", id: number) => {
     if (type === "request") {
@@ -164,6 +141,26 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       setSuggestions((prev) => prev.filter((item) => item.id !== id));
     }
   };
+
+  const handleUpdateRequest = async (request: Request) => {
+    try {
+      const updatedRequest = await RequestService.updateRequest(request);
+
+      setRequests((prev) =>
+        prev.map((item) => (item.id === request.id ? updatedRequest : item))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      const requests = await RequestService.getAllRequests();
+      setRequests(requests);
+    };
+    fetchRequests();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -380,11 +377,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           onClose={() => setShowRequestModal(false)}
           onSave={(updatedRequest) => {
             if (selectedRequest) {
-              setRequests((prev) =>
-                prev.map((req) =>
-                  req.id === updatedRequest.id ? updatedRequest : req
-                )
-              );
+              handleUpdateRequest(updatedRequest);
             } else {
               setRequests((prev) => [
                 ...prev,
