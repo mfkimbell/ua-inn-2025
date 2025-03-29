@@ -50,6 +50,7 @@ export default function AuthModal({ isOpen, setIsOpen }: AuthModalProps) {
         updateUser({
           username,
           creditBalance: session?.user?.startingCredits,
+          role: session?.user?.role,
         });
         setIsOpen(false);
       }

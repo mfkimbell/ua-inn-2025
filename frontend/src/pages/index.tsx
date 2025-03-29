@@ -11,17 +11,12 @@ export default function Home() {
   const { user } = useUser();
 
   if (!session) {
+    return <LandingPage />;
+  }
+
+  if (user?.role === "admin") {
     return <AdminView />;
   }
 
-  // if (user?.role === "admin") {
-  //   return <AdminView />;
-  // }
-
-  // if (user?.role === "employee") {
-  //   return 
-  // }
-
-  // return <LoggedInUser />;
   return <EmployeeView />;
 }
