@@ -131,16 +131,6 @@ export default function EmployeeView() {
             >
               My Requests
             </button>
-            <button
-              onClick={() => setActiveTab("team-requests")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === "team-requests"
-                  ? "border-[#E31937] text-[#E31937]"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Team Requests
-            </button>
           </nav>
         </div>
 
@@ -152,9 +142,9 @@ export default function EmployeeView() {
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center">
-                  {getTypeIcon(request.request_type)}
+                  {getTypeIcon(request.requestType)}
                   <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
-                    {request.request_type}
+                    {request.requestType}
                   </span>
                 </div>
                 <span
