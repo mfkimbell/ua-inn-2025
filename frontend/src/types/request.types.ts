@@ -1,6 +1,8 @@
+import { Status } from "./status.enum";
+
 export type ServerRequest = {
   id: number;
-  status: string;
+  status: Status;
   user_id: number;
   request: string;
   request_type: string;
@@ -8,16 +10,22 @@ export type ServerRequest = {
   created_at: string;
   updated_at: string;
   user_name: string;
+  admin: number;
+  admin_name: string;
+  cost: number;
 };
 
 export type Request = {
   id: number;
-  status: string;
+  status: Status;
   userId: number;
   request: string;
-  request_type: string;
+  requestType: string;
   orderId: number;
   createdAt: string;
   updatedAt: string;
   userName: string;
+  admin: number;
+  adminName: string;
+  cost: number;
 };

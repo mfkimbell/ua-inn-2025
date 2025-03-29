@@ -2,6 +2,7 @@ import { Order } from "./order.types";
 import { ServerOrder } from "./order.types";
 import { Request } from "./request.types";
 import { ServerRequest } from "./request.types";
+import { Status } from "./status.enum";
 import { Suggestion } from "./suggestion.types";
 import { ServerSuggestion } from "./suggestion.types";
 
@@ -34,10 +35,14 @@ export const parseServerRequest = (
 ): Request[] => {
   return serverRequest.map((request) => ({
     ...request,
+    status: request.status as Status,
     createdAt: request.created_at,
     updatedAt: request.updated_at,
     userId: request.user_id,
     orderId: request.order_id,
     userName: request.user_name,
+    requestType: request.request_type,
+    adminName: request.admin_name,
+    cost: request.cost,
   }));
 };

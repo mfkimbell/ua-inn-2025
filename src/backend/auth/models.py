@@ -83,14 +83,15 @@ class Request(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     user_name = Column(String, ForeignKey("user.first_name"))
     request = Column(String)
-    request_type = Column (
-        String, default="supply"
-    ) # maintenance | supply
+    request_type = Column(String, default="supply")  # maintenance | supply
     order_id = Column(Integer, ForeignKey("order.id"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     comments = Column(String)
     is_anonymous = Column(Boolean, default=False)
+    admin = Column(Integer, ForeignKey("user.id"))
+    admin_name = Column(String, ForeignKey("user.first_name"))
+    cost = Column(Float)
 
 
 Base.metadata.create_all(bind=engine)
