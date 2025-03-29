@@ -57,7 +57,6 @@ class Order(Base):
     completed_at = Column(DateTime)
     comments = Column(String)   
 
-
 @final
 class Suggestion(Base):
     __tablename__ = "suggestion"
@@ -69,6 +68,7 @@ class Suggestion(Base):
     completed_at = Column(DateTime)
     comments = Column(String)
     is_anonymous = Column(Boolean, default=False)
+
 @final
 class Request(Base):
     __tablename__ = "request"
