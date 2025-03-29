@@ -4,6 +4,7 @@ const initialState = {
   id: null,
   username: '',
   creditBalance: 0,
+  role: '',
 };
 
 const userSlice = createSlice({
@@ -14,6 +15,7 @@ const userSlice = createSlice({
       state.id = action.payload.id;
       state.username = action.payload.username;
       state.creditBalance = action.payload.creditBalance;
+      state.role = action.payload.role;
     },
     updateCreditBalance(state, action) {
       state.creditBalance = action.payload;
@@ -22,6 +24,7 @@ const userSlice = createSlice({
       state.id = null;
       state.username = '';
       state.creditBalance = 0;
+      state.role = '';
     },
   },
 });

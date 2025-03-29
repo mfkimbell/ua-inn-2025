@@ -5,6 +5,7 @@ import { LoggedInUser } from "@/components/pages/logged-in-user";
 
 export default function Home() {
   const { data: session } = useSession();
+  
 
   if (!session) {
     return <LandingPage />;
