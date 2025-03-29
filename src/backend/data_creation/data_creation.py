@@ -153,7 +153,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 request=fake.text(max_nb_chars=20),
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
-                user_name=choice(users).username,
+                user_name="employee",
                 request_type=choice(["maintenance", "supply"]),
                 status=choice(["pending", "approved", "denied", "delivered"]),
                 item_name=product,
