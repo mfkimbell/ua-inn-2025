@@ -10,6 +10,7 @@ from backend.auth.user_manager import UserManager
 from backend.database.database import (
     create_record,
     delete_record,
+    read_all_from_db,
     read_from_db,
     update_record,
 )
@@ -34,6 +35,14 @@ async def get_suggestion(
     db: Session = Depends(get_db),
 ):
     return read_from_db(db, user, Suggestion)
+
+
+@router.get("/suggestion/all")
+async def get_all_suggestions(
+    _: User = Depends(UserManager.get_user_from_header),
+    db: Session = Depends(get_db),
+):
+    return read_all_from_db(db, Suggestion)
 
 
 @router.post("/suggestion")

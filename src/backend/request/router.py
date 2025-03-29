@@ -1,4 +1,5 @@
 import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -10,6 +11,7 @@ from backend.auth.user_manager import UserManager
 from backend.database.database import (
     create_record,
     delete_record,
+    read_all_from_db,
     read_from_db,
     update_record,
 )
@@ -28,12 +30,21 @@ class RequestRequest(BaseModel):
     completed_at: datetime.datetime | None = None
     comments: str | None = None
 
+
 @router.get("/request")
 async def get_request(
     user: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
     return read_from_db(db, user, DatabaseRequest)
+
+
+@router.get("/request/all")
+async def get_all_requests(
+    _: User = Depends(UserManager.get_user_from_header),
+    db: Session = Depends(get_db),
+):
+    return read_all_from_db(db, DatabaseRequest)
 
 
 @router.post("/request")
