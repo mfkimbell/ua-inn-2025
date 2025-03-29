@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
+import AuthButton from "../auth/button";
 
 export default function EmployeeView() {
   const [activeTab, setActiveTab] = useState("my-requests");
@@ -96,6 +97,7 @@ export default function EmployeeView() {
               </span>
               <ChevronDown size={16} className="ml-1 text-gray-500" />
             </div>
+            <AuthButton toggleAuthModal={() => {}} />
           </div>
         </div>
       </header>

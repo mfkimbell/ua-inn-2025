@@ -110,7 +110,7 @@ export default function AuthModal({ isOpen, setIsOpen }: AuthModalProps) {
               required
             />
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between text-white">
             <Button type="submit">{isLogin ? "Login" : "Register"}</Button>
             <Button
               type="button"

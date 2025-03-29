@@ -24,7 +24,7 @@ export default function AuthButton({ toggleAuthModal }: AuthButtonProps) {
     <div>
       <button
         onClick={() => router.push("/auth/signout")}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="bg-[#E31937] hover:bg-[#c01731] text-white font-bold py-2 px-4 rounded"
       >
         Sign Out
       </button>
