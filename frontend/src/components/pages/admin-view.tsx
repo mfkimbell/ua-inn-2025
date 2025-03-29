@@ -194,6 +194,10 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-600 mb-6">
+          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+          Admin Approval Center
+        </div>
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           {activeTab === "requests" && (
