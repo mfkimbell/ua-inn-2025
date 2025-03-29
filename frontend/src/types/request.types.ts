@@ -16,6 +16,7 @@ export type ServerRequest = {
   requested_amount: number;
   ordered_amount: number;
   item_name: string;
+  comments: string;
 };
 
 export type Request = {
@@ -34,4 +35,5 @@ export type Request = {
   requestedAmount: number;
   orderedAmount: number;
   itemName: string;
+  comments: string;
 };
