@@ -28,20 +28,14 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Login to WorkSync
-            </h2>
-            <AuthButton toggleAuthModal={toggleAuthModal} />
-            <div className="mt-6 text-center text-sm text-gray-500">
-              Need help? Contact{" "}
-              <a
-                href="mailto:it@company.com"
-                className="text-[#E31937] hover:text-[#c01731]"
-              >
-                IT Support
-              </a>
-            </div>
+          <div className="mt-6 text-center text-sm text-gray-500">
+            Need help? Contact{" "}
+            <a
+              href="mailto:it@company.com"
+              className="text-[#E31937] hover:text-[#c01731]"
+            >
+              IT Support
+            </a>
           </div>
         </div>
       </main>
