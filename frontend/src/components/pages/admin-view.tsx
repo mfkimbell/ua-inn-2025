@@ -26,32 +26,6 @@ export type PageProps = {
   products: Product[];
 };
 
-// Sample suggestions (Requests are pulled from DB)
-const sampleSuggestions: Suggestion[] = [
-  {
-    id: 1,
-    userId: 1,
-    createdAt: "2025-03-15",
-    updatedAt: "2025-03-15",
-    completedAt: "2025-03-16",
-    suggestion: "Upgrade the coffee machine",
-    comments: "",
-    userName: "Alice",
-    isAnonymous: false,
-  },
-  {
-    id: 2,
-    userId: 2,
-    createdAt: "2025-03-10",
-    updatedAt: "2025-03-11",
-    completedAt: "",
-    suggestion: "Add a relaxation room",
-    comments: "",
-    userName: "Bob",
-    isAnonymous: true,
-  },
-];
-
 // Helper to display request type icons
 const getTypeIcon = (type: string) => {
   switch (type) {
@@ -106,8 +80,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   );
 
   const [requests, setRequests] = useState<Request[]>([]);
-  const [suggestions, setSuggestions] =
-    useState<Suggestion[]>(sampleSuggestions);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   // Filter states for Requests
   const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
@@ -180,6 +153,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleNewRequest = async (request: Request) => {
+    const newRequest = await RequestService.createRequest(request);
+    setRequests((prev) => [parseServerRequest([newRequest])[0], ...prev]);
   };
 
   return (
@@ -531,13 +509,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             if (selectedRequest) {
               handleUpdateRequest(updatedRequest);
             } else {
-              setRequests((prev) => [
-                ...prev,
-                {
-                  ...updatedRequest,
-                  id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-                },
-              ]);
+              handleNewRequest(updatedRequest);
             }
             setShowRequestModal(false);
           }}

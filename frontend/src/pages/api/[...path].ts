@@ -42,7 +42,7 @@ export default async function handler(
       forwardedBody = undefined;
     }
 
-    if (method === "PUT") {
+    if (method === "PUT" || method === "POST") {
       forwardedBody = body.data;
     }
 

@@ -96,6 +96,7 @@ class Request(Base):
     requested_amount = Column(Integer)
     ordered_amount = Column(Integer)
     item_name = Column(String)
+    completed_at = Column(DateTime)
 
 
 @final

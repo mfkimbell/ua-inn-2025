@@ -51,9 +51,10 @@ export const parseServerRequest = (
   }));
 };
 
-export const parseClientRequest = (clientRequest: Request): ServerRequest => {
+export const parseClientRequest = (
+  clientRequest: Request
+): Partial<ServerRequest> => {
   return {
-    ...clientRequest,
     user_id: clientRequest.userId,
     user_name: clientRequest.userName,
     request_type: clientRequest.requestType,
@@ -65,5 +66,6 @@ export const parseClientRequest = (clientRequest: Request): ServerRequest => {
     requested_amount: clientRequest.requestedAmount,
     ordered_amount: clientRequest.orderedAmount,
     item_name: clientRequest.itemName,
+    request: clientRequest.request,
   };
 };

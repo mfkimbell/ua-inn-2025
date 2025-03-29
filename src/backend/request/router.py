@@ -27,7 +27,6 @@ class RequestRequest(BaseModel):
     order_id: int | None = None
     created_at: datetime.datetime | None = None
     updated_at: datetime.datetime | None = None
-    completed_at: datetime.datetime | None = None
     comments: str | None = None
     status: str | None = None
     request_type: str | None = None
@@ -37,6 +36,7 @@ class RequestRequest(BaseModel):
     requested_amount: int | None = None
     ordered_amount: int | None = None
     item_name: str | None = None
+
 
 @router.get("/request")
 async def get_request(
@@ -61,7 +61,6 @@ async def create_request(
     db: Session = Depends(get_db),
 ):
     request.user_id = user.id
-    request.user_name = user.first_name
 
     return create_record(db, DatabaseRequest, request.model_dump())
 

@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { Request } from "@/types/request.types";
 import { Product } from "@/types/product.types";
 import { Status } from "@/types/status.enum";
+import useUser from "@/hooks/useUser";
 
 interface RequestModalProps {
   request: Request | null;
@@ -18,6 +19,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const { user } = useUser();
   const [formData, setFormData] = useState<Request>({
     id: request?.id || 0,
     status: request?.status || Status.PENDING,
@@ -27,7 +29,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
     orderId: request?.orderId || 0,
     createdAt: request?.createdAt || new Date().toISOString().split("T")[0],
     updatedAt: request?.updatedAt || new Date().toISOString().split("T")[0],
-    userName: request?.userName || "",
+    userName: user?.username || "",
     admin: request?.admin || 0,
     adminName: request?.adminName || "",
     cost: request?.cost || 0,
@@ -68,7 +70,10 @@ const RequestModal: React.FC<RequestModalProps> = ({
             <h2 className="text-lg font-medium text-gray-900">
               {request ? "Edit Request" : "New Request"}
             </h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-500"
+            >
               <X size={24} />
             </button>
           </div>
@@ -182,20 +187,6 @@ const RequestModal: React.FC<RequestModalProps> = ({
               </select>
             </div>
             {/* User Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                User Name
-              </label>
-              <input
-                type="text"
-                name="userName"
-                value={formData.userName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                required
-              />
-            </div>
-            {/* Cost */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Cost
