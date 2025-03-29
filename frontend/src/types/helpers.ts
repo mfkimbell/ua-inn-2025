@@ -16,6 +16,7 @@ export const parseServerSuggestion = (
     updatedAt: serverSuggestion.updated_at,
     completedAt: serverSuggestion.completed_at,
     userName: serverSuggestion.user_name,
+    isAnonymous: serverSuggestion.is_anonymous,
   };
 };
 
