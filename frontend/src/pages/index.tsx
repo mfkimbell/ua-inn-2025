@@ -16,5 +16,9 @@ export default function Home() {
     return <AdminView />;
   }
 
+  // if (user?.role === "employee") {
+  //   return 
+  // }
+
   return <LoggedInUser />;
 }
