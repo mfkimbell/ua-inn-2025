@@ -7,7 +7,6 @@ export type ServerSuggestion = {
   completed_at: string;
   comments: string;
   user_name: string;
-  suggestion_type: string;
 };
 
 export type Suggestion = {
@@ -19,5 +18,4 @@ export type Suggestion = {
   suggestion: string;
   comments: string;
   userName: string;
-  suggestionType: string;
 };

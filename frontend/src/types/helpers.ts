@@ -10,7 +10,6 @@ export const parseServerSuggestion = (
 ): Suggestion => {
   return {
     ...serverSuggestion,
-    suggestionType: serverSuggestion.suggestion_type,
     userId: serverSuggestion.user_id,
     createdAt: serverSuggestion.created_at,
     updatedAt: serverSuggestion.updated_at,
@@ -30,13 +29,15 @@ export const parseServerOrder = (serverOrder: ServerOrder): Order => {
   };
 };
 
-export const parseServerRequest = (serverRequest: ServerRequest[]): Request[] => {
+export const parseServerRequest = (
+  serverRequest: ServerRequest[]
+): Request[] => {
   return serverRequest.map((request) => ({
     ...request,
     createdAt: request.created_at,
     updatedAt: request.updated_at,
     userId: request.user_id,
     orderId: request.order_id,
-                userName: request.user_name,
+    userName: request.user_name,
   }));
 };
