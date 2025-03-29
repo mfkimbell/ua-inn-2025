@@ -55,6 +55,7 @@ class Order(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)
+    comments = Column(String)   
 
 
 @final
@@ -66,7 +67,7 @@ class Suggestion(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)
-
+    comments = Column(String)
 
 @final
 class Request(Base):
@@ -77,6 +78,7 @@ class Request(Base):
     order_id = Column(Integer, ForeignKey("order.id"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
+    comments = Column(String)
 
 
 Base.metadata.create_all(bind=engine)
