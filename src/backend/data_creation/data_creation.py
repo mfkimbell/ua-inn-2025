@@ -78,6 +78,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 status=choice(["pending", "processing", "completed", "cancelled"]),
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
+                cost=randint(0, 100),
             )
             order.updated_at = fake.date_time_between(start_date=order.created_at)
             if order.status == "completed":

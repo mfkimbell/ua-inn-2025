@@ -6,6 +6,7 @@ export type ServerOrder = {
   updated_at: string;
   completed_at: string;
   user_name: string;
+  cost: number;
 };
 
 export type Order = {
@@ -16,4 +17,5 @@ export type Order = {
   updatedAt: string;
   completedAt: string;
   userName: string;
+  cost: number;
 };

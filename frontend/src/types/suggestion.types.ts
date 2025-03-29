@@ -13,7 +13,7 @@ export type ServerSuggestion = {
 export type Suggestion = {
   id: number;
   userId: number;
-  createdAt: string;
+  createdAt: string;    
   updatedAt: string;
   completedAt: string;
   suggestion: string;

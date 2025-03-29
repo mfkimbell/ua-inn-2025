@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import final
 
 from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
 
 from backend.auth.database import Base, engine
 
@@ -59,6 +59,7 @@ class Order(Base):
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)
     comments = Column(String)
+    cost = Column(Float)
 
 
 @final
