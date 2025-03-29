@@ -1,7 +1,6 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import LandingPage from "@/components/pages/landing-page";
-import { LoggedInUser } from "@/components/pages/logged-in-user";
 import useUser from "@/hooks/useUser";
 import EmployeeView from "@/components/pages/employee-view";
 import AdminView from "@/components/pages/admin-view";
