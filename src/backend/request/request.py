@@ -5,7 +5,12 @@ from backend.auth.database import get_db
 from backend.auth.models import Request as DatabaseRequest
 from backend.auth.models import User
 from backend.auth.user_manager import UserManager
-from backend.database.database import create_record, read_from_db, update_record
+from backend.database.database import (
+    create_record,
+    delete_record,
+    read_from_db,
+    update_record,
+)
 
 router = APIRouter()
 
@@ -43,3 +48,19 @@ async def update_request(
         raise HTTPException(status_code=404, detail="Request not found")
 
     return update_record(db, DatabaseRequest, request.model_dump())
+
+
+@router.delete("/request")
+async def delete_request(
+    request_id: int,
+    _: User = Depends(UserManager.get_user_from_header),
+    db: Session = Depends(get_db),
+):
+    db_request = (
+        db.query(DatabaseRequest).filter(DatabaseRequest.id == request_id).first()
+    )
+
+    if not db_request:
+        raise HTTPException(status_code=404, detail="Request not found")
+
+    return delete_record(db, DatabaseRequest, db_request.id)

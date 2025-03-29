@@ -9,12 +9,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const getNextApiFunction = (options?: AxiosRequestConfig) => {
+  if (options?.method === "GET") {
+    return nextApi.get;
+  }
+
+  if (options?.method === "POST") {
+    return nextApi.post;
+  }
+
+  if (options?.method === "PUT") {
+    return nextApi.put;
+  }
+
+  if (options?.method === "DELETE") {
+    return nextApi.delete;
+  }
+
+  return nextApi.get;
+};
+
 export async function fetch<T>(
   url: string,
   options?: AxiosRequestConfig
 ): Promise<T | null> {
+  const nextApiFunction = getNextApiFunction(options);
   try {
-    const response: AxiosResponse<T> = await nextApi.get(url, options);
+    const response: AxiosResponse<T> = await nextApiFunction(url, options);
 
     if (!response) {
       toast.error("No response received from server");

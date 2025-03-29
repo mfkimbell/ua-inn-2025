@@ -28,6 +28,14 @@ def update_record(db: Session, model: Any, data: Any) -> Any:
     return db_model
 
 
+def delete_record(db: Session, model: Any, id: int) -> Any:
+    db_model = db.query(model).filter(f"{model.id} == {id}").first()
+
+    if db_model:
+        db.delete(db_model)
+        db.commit()
+
+
 def create_in_db(db: Session, model: Any, data: Any) -> Any:
     db_model = model(**data)
     db.add(db_model)
