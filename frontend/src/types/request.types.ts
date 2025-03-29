@@ -5,6 +5,7 @@ export type ServerRequest = {
   order_id: number;
   created_at: string;
   updated_at: string;
+  user_name: string;
 };
 
 export type Request = {
@@ -14,4 +15,5 @@ export type Request = {
   orderId: number;
   createdAt: string;
   updatedAt: string;
+  userName: string;
 };

@@ -1,3 +1,4 @@
+import hashlib
 from random import choice, randint
 
 from faker import Faker
@@ -6,6 +7,37 @@ from sqlalchemy.orm import Session
 from backend.auth.models import Order, Request, Suggestion, User
 
 fake = Faker()
+
+
+def create_test_users(db: Session) -> None:
+    admin_user = User(
+        username="admin",
+        email="admin@cgi.com",
+        hashed_password=hashlib.sha256("admin".encode()).hexdigest(),
+        credits=randint(0, 100),
+        role="admin",
+    )
+
+    hr_user = User(
+        username="hr",
+        email="hr@cgi.com",
+        hashed_password=hashlib.sha256("hr".encode()).hexdigest(),
+        credits=randint(0, 100),
+        role="hr",
+    )
+
+    employee_user = User(
+        username="employee",
+        email="employee@cgi.com",
+        hashed_password=hashlib.sha256("employee".encode()).hexdigest(),
+        credits=randint(0, 100),
+        role="employee",
+    )
+
+    db.add(admin_user)
+    db.add(hr_user)
+    db.add(employee_user)
+    db.commit()
 
 
 def create_fake_data(db: Session, num_records: int = 10) -> None:
@@ -42,6 +74,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 user_id=choice(users).id,
                 status=choice(["pending", "processing", "completed", "cancelled"]),
                 created_at=fake.date_time_between(start_date="-1y"),
+                user_name=choice(users).username,
             )
             order.updated_at = fake.date_time_between(start_date=order.created_at)
             if order.status == "completed":
@@ -57,6 +90,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 user_id=choice(users).id,
                 suggestion=fake.text(max_nb_chars=200),
                 created_at=fake.date_time_between(start_date="-1y"),
+                user_name=choice(users).username,
             )
             suggestion.updated_at = fake.date_time_between(
                 start_date=suggestion.created_at
@@ -77,6 +111,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 request=fake.text(max_nb_chars=200),
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
+                user_name=choice(users).username,
             )
             request.updated_at = fake.date_time_between(start_date=request.created_at)
             db.add(request)

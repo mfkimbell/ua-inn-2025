@@ -14,6 +14,7 @@ export const parseServerSuggestion = (
     createdAt: serverSuggestion.created_at,
     updatedAt: serverSuggestion.updated_at,
     completedAt: serverSuggestion.completed_at,
+    userName: serverSuggestion.user_name,
   };
 };
 
@@ -24,6 +25,7 @@ export const parseServerOrder = (serverOrder: ServerOrder): Order => {
     createdAt: serverOrder.created_at,
     updatedAt: serverOrder.updated_at,
     completedAt: serverOrder.completed_at,
+    userName: serverOrder.user_name,
   };
 };
 
@@ -34,5 +36,6 @@ export const parseServerRequest = (serverRequest: ServerRequest): Request => {
     updatedAt: serverRequest.updated_at,
     userId: serverRequest.user_id,
     orderId: serverRequest.order_id,
+    userName: serverRequest.user_name,
   };
 };

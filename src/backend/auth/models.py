@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import final
 
 from pydantic import BaseModel
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 
 from backend.auth.database import Base, engine
 
@@ -20,6 +20,8 @@ class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     username = Column(String, unique=True, index=True)
+    first_name = Column(String)
+    last_name = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     credits = Column(Integer, default=1)
@@ -51,17 +53,20 @@ class Order(Base):
     __tablename__ = "order"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
+    user_name = Column(String, ForeignKey("user.first_name"))
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)
-    comments = Column(String)   
+    comments = Column(String)
+
 
 @final
 class Suggestion(Base):
     __tablename__ = "suggestion"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
+    user_name = Column(String, ForeignKey("user.first_name"))
     suggestion = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
@@ -69,11 +74,13 @@ class Suggestion(Base):
     comments = Column(String)
     is_anonymous = Column(Boolean, default=False)
 
+
 @final
 class Request(Base):
     __tablename__ = "request"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
+    user_name = Column(String, ForeignKey("user.first_name"))
     request = Column(String)
     order_id = Column(Integer, ForeignKey("order.id"))
     created_at = Column(DateTime, default=datetime.now)
