@@ -19,11 +19,11 @@ export default function EmployeeView() {
   const [requestDetails, setRequestDetails] = useState('');
 
   const myRequests = [
-    { id: 1, type: 'supply', title: 'New monitor stand', status: 'pending', created: '2025-03-25', updated: '2025-03-25' },
-    { id: 2, type: 'maintenance', title: 'Fix office chair', status: 'approved', created: '2025-03-20', updated: '2025-03-21' },
-    { id: 3, type: 'suggestion', title: 'Better coffee in break room', status: 'completed', created: '2025-03-15', updated: '2025-03-22' },
-    { id: 4, type: 'supply', title: 'Wireless keyboard', status: 'denied', created: '2025-03-10', updated: '2025-03-12' },
-  ];
+    { id: 1, request_type: 'supply', title: 'New monitor stand', status: 'pending', created: '2025-03-25', updated: '2025-03-25' },
+    { id: 2, request_type: 'maintenance', title: 'Fix office chair', status: 'approved', created: '2025-03-20', updated: '2025-03-21' },
+    { id: 3, request_type: 'suggestion', title: 'Better coffee in break room', status: 'completed', created: '2025-03-15', updated: '2025-03-22' },
+    { id: 4, request_type: 'supply', title: 'Wireless keyboard', status: 'denied', created: '2025-03-10', updated: '2025-03-12' },
+  ];    
 
   const handleNewRequest = (e) => {
     e.preventDefault();
@@ -45,8 +45,8 @@ export default function EmployeeView() {
     }
   };
 
-  const getTypeIcon = (type) => {
-    switch (type) {
+  const getTypeIcon = (request_type: string) => {
+    switch (request_type) {
       case 'supply': return <Box size={20} className="text-[#E31937]" />;
       case 'maintenance': return <Wrench size={20} className="text-[#E31937]" />;
       case 'suggestion': return <FileText size={20} className="text-[#E31937]" />;
@@ -109,16 +109,6 @@ export default function EmployeeView() {
               }`}
             >
               My Requests
-            </button>
-            <button
-              onClick={() => setActiveTab('team-requests')}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'team-requests'
-                  ? 'border-[#E31937] text-[#E31937]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Team Requests
             </button>
           </nav>
         </div>
