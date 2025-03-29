@@ -6,7 +6,7 @@ from backend.auth.models import User
 
 
 def read_from_db(db: Session, user: User, model: Any) -> Any:
-    return db.query(model).filter(f"{user.role}.id == {model.user_id}").all()
+    return db.query(model).filter(model.user_id == user.id).all()
 
 
 def read_all_from_db(db: Session, model: Any) -> Any:

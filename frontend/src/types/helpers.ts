@@ -30,13 +30,13 @@ export const parseServerOrder = (serverOrder: ServerOrder): Order => {
   };
 };
 
-export const parseServerRequest = (serverRequest: ServerRequest): Request => {
-  return {
-    ...serverRequest,
-    createdAt: serverRequest.created_at,
-    updatedAt: serverRequest.updated_at,
-    userId: serverRequest.user_id,
-    orderId: serverRequest.order_id,
-    userName: serverRequest.user_name,
-  };
+export const parseServerRequest = (serverRequest: ServerRequest[]): Request[] => {
+  return serverRequest.map((request) => ({
+    ...request,
+    createdAt: request.created_at,
+    updatedAt: request.updated_at,
+    userId: request.user_id,
+    orderId: request.order_id,
+                userName: request.user_name,
+  }));
 };
