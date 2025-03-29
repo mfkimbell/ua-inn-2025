@@ -68,6 +68,9 @@ class Suggestion(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     user_name = Column(String, ForeignKey("user.first_name"))
     suggestion = Column(String)
+    suggestion_type = Column(
+        String, default="suggestion"
+    )  # maintenance | supply | suggestion
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     completed_at = Column(DateTime)

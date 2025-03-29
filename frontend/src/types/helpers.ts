@@ -10,6 +10,7 @@ export const parseServerSuggestion = (
 ): Suggestion => {
   return {
     ...serverSuggestion,
+    suggestionType: serverSuggestion.suggestion_type,
     userId: serverSuggestion.user_id,
     createdAt: serverSuggestion.created_at,
     updatedAt: serverSuggestion.updated_at,

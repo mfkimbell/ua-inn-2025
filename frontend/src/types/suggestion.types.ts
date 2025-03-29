@@ -7,15 +7,17 @@ export type ServerSuggestion = {
   completed_at: string;
   comments: string;
   user_name: string;
+  suggestion_type: string;
 };
 
 export type Suggestion = {
   id: number;
   userId: number;
-  createdAt: string;    
+  createdAt: string;
   updatedAt: string;
   completedAt: string;
   suggestion: string;
   comments: string;
   userName: string;
+  suggestionType: string;
 };
