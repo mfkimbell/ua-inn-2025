@@ -84,6 +84,7 @@ class Request(Base):
     user_name = Column(String, ForeignKey("user.first_name"))
     request = Column(String)
     request_type = Column(String, default="supply")  # maintenance | supply
+    status = Column(String, default="pending")
     order_id = Column(Integer, ForeignKey("order.id"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
