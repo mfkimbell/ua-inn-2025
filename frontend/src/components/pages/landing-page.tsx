@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
@@ -9,17 +9,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <span className="text-3xl font-bold text-[#E31937]">Work</span>
-            <span className="text-3xl font-bold text-gray-900">Sync</span>
-          </div>
-          <button className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-6 rounded-md transition-colors">
-            Login
-          </button>
-        </div>
-      </header>
+      
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex flex-col md:flex-row gap-12 items-center">
