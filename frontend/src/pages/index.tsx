@@ -9,9 +9,9 @@ export default function Home() {
   const { data: session } = useSession();
   const { user } = useUser();
 
-  // if (!session) {
-  //   return <LandingPage />;
-  // }
+  if (!session) {
+    return <LandingPage />;
+  }
 
   // if (user?.role === "admin") {
   //   return <AdminView />;

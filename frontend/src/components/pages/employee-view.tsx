@@ -130,16 +130,6 @@ export default function EmployeeView() {
             >
               My Requests
             </button>
-            <button
-              onClick={() => setActiveTab("team-requests")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === "team-requests"
-                  ? "border-[#E31937] text-[#E31937]"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Team Requests
-            </button>
           </nav>
         </div>
 
