@@ -120,6 +120,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
                 request_type=choice(["maintenance", "supply"]),
+                status=choice(["pending", "approved", "denied", "delivered"]),
             )
             request.updated_at = fake.date_time_between(start_date=request.created_at)
             db.add(request)

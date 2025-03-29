@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import dayjs from "dayjs";
 import {
   Bell,
   UserCircle,
@@ -20,7 +21,7 @@ export default function EmployeeView() {
   const [requestTitle, setRequestTitle] = useState("");
   const [requestDetails, setRequestDetails] = useState("");
   const [myRequests, setMyRequests] = useState<Request[]>([]);
- 
+
   useEffect(() => {
     const fetchRequests = async () => {
       const requests = await RequestService.getRequests();
@@ -169,8 +170,14 @@ export default function EmployeeView() {
               </h3>
               <div className="mt-4 text-xs text-gray-500">
                 <div className="flex justify-between">
-                  <span>Created: {request.createdAt}</span>
-                  <span>Updated: {request.updatedAt}</span>
+                  <span>
+                    Created:{" "}
+                    {dayjs(request.createdAt).format("DD/MM/YYYY hh:mm:ss")}
+                  </span>
+                  <span>
+                    Updated:{" "}
+                    {dayjs(request.updatedAt).format("DD/MM/YYYY hh:mm:ss")}
+                  </span>
                 </div>
               </div>
               <button className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
