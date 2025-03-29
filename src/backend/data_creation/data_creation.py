@@ -115,7 +115,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
         for _ in range(num_records):
             request = Request(
                 user_id=999,
-                request=fake.text(max_nb_chars=200),
+                request=fake.text(max_nb_chars=20),
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
