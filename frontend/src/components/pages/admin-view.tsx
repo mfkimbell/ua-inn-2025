@@ -19,6 +19,7 @@ import { Status } from "@/types/status.enum";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import { Suggestion } from "@/types/suggestion.types";
+import { parseServerRequest } from "@/types";
 
 export type PageProps = {
   products: Product[];
@@ -147,7 +148,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       const updatedRequest = await RequestService.updateRequest(request);
 
       setRequests((prev) =>
-        prev.map((item) => (item.id === request.id ? updatedRequest : item))
+        prev.map((item) =>
+          item.id === request.id
+            ? parseServerRequest([updatedRequest])[0]
+            : item
+        )
       );
     } catch (error) {
       console.error(error);
