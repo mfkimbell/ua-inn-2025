@@ -14,6 +14,7 @@ import {
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import AuthButton from "../auth/button";
+import RequestDetailsModal from "@/components/ui/details-modal";
 
 export default function EmployeeView() {
   const [activeTab, setActiveTab] = useState("my-requests");
@@ -22,6 +23,7 @@ export default function EmployeeView() {
   const [requestTitle, setRequestTitle] = useState("");
   const [requestDetails, setRequestDetails] = useState("");
   const [myRequests, setMyRequests] = useState<Request[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -172,7 +174,13 @@ export default function EmployeeView() {
                   </span>
                 </div>
               </div>
-              <button className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+              {/* <button className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                View Details
+              </button> */}
+              <button
+                onClick={() => setSelectedRequest(request)}
+                className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+              >
                 View Details
               </button>
             </div>
@@ -273,6 +281,13 @@ export default function EmployeeView() {
             </div>
           </div>
         </div>
+      )}
+      
+      {selectedRequest && (
+        <RequestDetailsModal 
+          request={selectedRequest} 
+          onClose={() => setSelectedRequest(null)} 
+        />
       )}
     </div>
   );
