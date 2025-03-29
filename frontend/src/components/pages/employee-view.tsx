@@ -141,9 +141,9 @@ export default function EmployeeView() {
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center">
-                  {getTypeIcon(request.request_type)}
+                  {getTypeIcon(request.requestType)}
                   <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
-                    {request.request_type}
+                    {request.requestType}
                   </span>
                 </div>
                 <span
