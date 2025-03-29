@@ -96,7 +96,6 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
             suggestion = Suggestion(
                 user_id=choice(users).id,
                 suggestion=fake.text(max_nb_chars=200),
-                suggestion_type=choice(["maintenance", "supply", "suggestion"]),
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
             )
@@ -120,6 +119,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
+                request_type=choice(["maintenance", "supply"]),
             )
             request.updated_at = fake.date_time_between(start_date=request.created_at)
             db.add(request)
