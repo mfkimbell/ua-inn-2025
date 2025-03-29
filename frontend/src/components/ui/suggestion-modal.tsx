@@ -85,6 +85,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
                 value={formData.comments}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                rows={3}
               ></textarea>
             </div>
             <div className="flex items-center mb-4">

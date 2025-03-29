@@ -34,6 +34,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
     requestedAmount: request?.requestedAmount || 0,
     orderedAmount: request?.orderedAmount || 0,
     itemName: request?.itemName || "",
+    comments: request?.comments || "",
   });
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
             </button>
           </div>
           <form onSubmit={handleSubmit}>
+            {/* Request Field */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Request
@@ -85,6 +87,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 required
               />
             </div>
+            {/* Request Type */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Request Type
@@ -100,6 +103,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 <option value="suggestion">Suggestion</option>
               </select>
             </div>
+            {/* Item Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Item Name
@@ -119,6 +123,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 ))}
               </select>
             </div>
+            {/* Requested Amount */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Requested Amount
@@ -132,6 +137,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 required
               />
             </div>
+            {/* Ordered Amount */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ordered Amount
@@ -144,6 +150,20 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
+            {/* Comments */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Comments
+              </label>
+              <textarea
+                name="comments"
+                value={formData.comments}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                rows={3}
+              ></textarea>
+            </div>
+            {/* Status */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Status
@@ -161,6 +181,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 <option value={Status.ORDERED}>{Status.ORDERED}</option>
               </select>
             </div>
+            {/* User Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 User Name
@@ -174,6 +195,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 required
               />
             </div>
+            {/* Cost */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Cost
@@ -186,6 +208,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
+            {/* Admin Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Admin Name

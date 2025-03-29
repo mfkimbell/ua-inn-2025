@@ -10,6 +10,7 @@ import {
   Box,
   FileText,
   Wrench,
+  Calendar,
 } from "lucide-react";
 import RequestModal from "@/components/ui/request-modal";
 import SuggestionModal from "@/components/ui/suggestion-modal";
@@ -25,46 +26,7 @@ export type PageProps = {
   products: Product[];
 };
 
-// Sample data arrays for demonstration
-const sampleRequests: Request[] = [
-  {
-    id: 1,
-    status: Status.PENDING,
-    userId: 1,
-    request: "Request new office supplies",
-    requestType: "supply",
-    orderId: 0,
-    createdAt: "2025-03-25",
-    updatedAt: "2025-03-25",
-    userName: "Alice",
-    admin: 0,
-    adminName: "",
-    cost: 0,
-    requestedAmount: 10,
-    orderedAmount: 0,
-    itemName: "Printer Paper",
-    comments: "",
-  },
-  {
-    id: 2,
-    status: Status.APPROVED,
-    userId: 2,
-    request: "Fix the printer",
-    requestType: "maintenance",
-    orderId: 0,
-    createdAt: "2025-03-20",
-    updatedAt: "2025-03-21",
-    userName: "Bob",
-    admin: 1,
-    adminName: "Admin1",
-    cost: 50,
-    requestedAmount: 1,
-    orderedAmount: 1,
-    itemName: "Ink Cartridge",
-    comments: "",
-  },
-];
-
+// Sample suggestions (Requests are pulled from DB)
 const sampleSuggestions: Suggestion[] = [
   {
     id: 1,
@@ -114,10 +76,29 @@ const getStatusColor = (status: string) => {
       return "bg-green-100 text-green-800";
     case "denied":
       return "bg-red-100 text-red-800";
+    case "delivered":
+      return "bg-green-100 text-green-800";
+    case "ordered":
+      return "bg-purple-100 text-purple-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
 };
+
+// For suggestions, derive status from completedAt (if empty, "pending"; otherwise, "completed")
+const getSuggestionStatus = (sugg: Suggestion) =>
+  sugg.completedAt ? "completed" : "pending";
+
+// Define status options for filtering (including "all")
+const statusOptions = [
+  "all",
+  "pending",
+  "approved",
+  "completed",
+  "denied",
+  "delivered",
+  "ordered",
+];
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
   const [activeTab, setActiveTab] = useState<"requests" | "suggestions">(
@@ -127,6 +108,48 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   const [requests, setRequests] = useState<Request[]>([]);
   const [suggestions, setSuggestions] =
     useState<Suggestion[]>(sampleSuggestions);
+
+  // Filter states for Requests
+  const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
+  const [reqFilterStartDate, setReqFilterStartDate] = useState<string>("");
+  const [reqFilterEndDate, setReqFilterEndDate] = useState<string>("");
+  const [showReqDateRange, setShowReqDateRange] = useState<boolean>(false);
+
+  // Filter states for Suggestions
+  const [suggFilterStatus, setSuggFilterStatus] = useState<string>("all");
+  const [suggFilterStartDate, setSuggFilterStartDate] = useState<string>("");
+  const [suggFilterEndDate, setSuggFilterEndDate] = useState<string>("");
+  const [showSuggDateRange, setShowSuggDateRange] = useState<boolean>(false);
+
+  // Fetch requests from the database on mount
+  useEffect(() => {
+    const fetchRequests = async () => {
+      const dbRequests = await RequestService.getAllRequests();
+      setRequests(dbRequests);
+    };
+    fetchRequests();
+  }, []);
+
+  // Filter requests based on status and created date range
+  const filteredRequests = requests.filter((req) => {
+    const statusMatch =
+      reqFilterStatus === "all" || req.status.toLowerCase() === reqFilterStatus;
+    const dateMatch =
+      (reqFilterStartDate === "" || req.createdAt >= reqFilterStartDate) &&
+      (reqFilterEndDate === "" || req.createdAt <= reqFilterEndDate);
+    return statusMatch && dateMatch;
+  });
+
+  // Filter suggestions based on derived status and created date range
+  const filteredSuggestions = suggestions.filter((sugg) => {
+    const derivedStatus = getSuggestionStatus(sugg);
+    const statusMatch =
+      suggFilterStatus === "all" || derivedStatus === suggFilterStatus;
+    const dateMatch =
+      (suggFilterStartDate === "" || sugg.createdAt >= suggFilterStartDate) &&
+      (suggFilterEndDate === "" || sugg.createdAt <= suggFilterEndDate);
+    return statusMatch && dateMatch;
+  });
 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
@@ -143,10 +166,10 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     }
   };
 
+  // Keep the update function for requests (database update)
   const handleUpdateRequest = async (request: Request) => {
     try {
       const updatedRequest = await RequestService.updateRequest(request);
-
       setRequests((prev) =>
         prev.map((item) =>
           item.id === request.id
@@ -158,14 +181,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      const requests = await RequestService.getAllRequests();
-      setRequests(requests);
-    };
-    fetchRequests();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -215,6 +230,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             </button>
           )}
           {activeTab === "suggestions" && (
+            // If you allow creation, this button can be shown; otherwise, remove it.
             <button
               onClick={() => {
                 setSelectedSuggestion(null);
@@ -253,10 +269,140 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           </nav>
         </div>
 
+        {/* Filter Panel for Requests */}
+        {activeTab === "requests" && (
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-4 items-center">
+              {/* Status Filter Buttons */}
+              <div className="flex items-center gap-2">
+                {statusOptions.map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setReqFilterStatus(status)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      status === "all"
+                        ? "bg-gray-200 text-gray-800"
+                        : getStatusColor(status)
+                    } ${
+                      reqFilterStatus === status
+                        ? "ring-2 ring-offset-2 ring-[#E31937]"
+                        : ""
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+              {/* Calendar Icon Button for Date Range */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowReqDateRange(!showReqDateRange)}
+                  className="px-3 py-1 rounded-md bg-gray-200 text-gray-800 text-xs font-medium flex items-center"
+                >
+                  <Calendar size={16} className="mr-1" /> Date Range
+                </button>
+                {showReqDateRange && (
+                  <div className="absolute z-20 top-full left-0 mt-2 p-4 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Start Date:
+                    </label>
+                    <input
+                      type="date"
+                      value={reqFilterStartDate}
+                      onChange={(e) => setReqFilterStartDate(e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm mb-2"
+                    />
+                    <label className="block text-sm text-gray-600 mb-1">
+                      End Date:
+                    </label>
+                    <input
+                      type="date"
+                      value={reqFilterEndDate}
+                      onChange={(e) => setReqFilterEndDate(e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm mb-2"
+                    />
+                    <button
+                      onClick={() => setShowReqDateRange(false)}
+                      className="px-3 py-1 rounded-md bg-[#E31937] text-white text-xs font-medium"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter Panel for Suggestions */}
+        {activeTab === "suggestions" && (
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2">
+                {["all", "pending", "completed"].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setSuggFilterStatus(status)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      status === "all"
+                        ? "bg-gray-200 text-gray-800"
+                        : status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-green-100 text-green-800"
+                    } ${
+                      suggFilterStatus === status
+                        ? "ring-2 ring-offset-2 ring-[#E31937]"
+                        : ""
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowSuggDateRange(!showSuggDateRange)}
+                  className="px-3 py-1 rounded-md bg-gray-200 text-gray-800 text-xs font-medium flex items-center"
+                >
+                  <Calendar size={16} className="mr-1" /> Date Range
+                </button>
+                {showSuggDateRange && (
+                  <div className="absolute z-20 top-full left-0 mt-2 p-4 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Start Date:
+                    </label>
+                    <input
+                      type="date"
+                      value={suggFilterStartDate}
+                      onChange={(e) => setSuggFilterStartDate(e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm mb-2"
+                    />
+                    <label className="block text-sm text-gray-600 mb-1">
+                      End Date:
+                    </label>
+                    <input
+                      type="date"
+                      value={suggFilterEndDate}
+                      onChange={(e) => setSuggFilterEndDate(e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm mb-2"
+                    />
+                    <button
+                      onClick={() => setShowSuggDateRange(false)}
+                      className="px-3 py-1 rounded-md bg-[#E31937] text-white text-xs font-medium"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Requests List */}
         {activeTab === "requests" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {requests.map((req) => (
+            {filteredRequests.map((req) => (
               <div
                 key={req.id}
                 className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -280,7 +426,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   {req.request}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
-                  Submitted by: {req.userName}
+                  Submitted by: {req.is_anonymous ? "anonymous" : req.userName}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
                   Item: {req.itemName}
@@ -326,7 +472,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
         {/* Suggestions List */}
         {activeTab === "suggestions" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {suggestions.map((sugg) => (
+            {filteredSuggestions.map((sugg) => (
               <div
                 key={sugg.id}
                 className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -336,7 +482,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                     Suggestion ID: {sugg.id}
                   </span>
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    pending
+                    {getSuggestionStatus(sugg)}
                   </span>
                 </div>
                 <p className="text-lg font-medium text-gray-900 mb-2">
