@@ -144,6 +144,7 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
     if not suggestions:
         for _ in range(num_records):
             suggestion = Suggestion(
+                id=randint(1, 10000),
                 user_id=choice(users).id,
                 suggestion=choice(OFFICE_SUGGESTIONS),
                 created_at=fake.date_time_between(start_date="-1y"),
@@ -178,6 +179,7 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
                 item_name = ""  # Maintenance requests typically don't have an item name
 
             request = Request(
+                id=randint(1, 10000),
                 user_id=999,  # using the employee id for test data
                 request=request_text,
                 created_at=fake.date_time_between(start_date="-1y"),

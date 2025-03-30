@@ -1,7 +1,6 @@
 import { Plus, Search } from "lucide-react";
 import { Product } from "@/types/product.types";
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import AddProductModal from "./add-item-modal";
 import { ProductsService } from "@/lib/products-service";
 import useUser from "@/hooks/useUser";
