@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import AddProductModal from "./add-item-modal";
 import { ProductsService } from "@/lib/products-service";
-
+import useUser from "@/hooks/useUser";
 interface InventoryProps {
   products: Product[];
 }
@@ -12,6 +12,7 @@ interface InventoryProps {
 const ITEMS_PER_PAGE = 6;
 
 const Inventory: React.FC<InventoryProps> = ({ products }) => {
+  const { user } = useUser();
   const [currentProducts, setCurrentProducts] = useState<Product[]>(products);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,13 +61,15 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
           <h2 className="text-lg font-medium text-gray-900">
             Inventory Management
           </h2>
-          <button
-            onClick={() => setShowAddProductModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E31937] hover:bg-[#c01731]"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Item
-          </button>
+          {user?.role === "admin" && (
+            <button
+              onClick={() => setShowAddProductModal(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E31937] hover:bg-[#c01731]"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Item
+            </button>
+          )}
         </div>
 
         <div className="mb-4">
@@ -103,9 +106,11 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                   Stock
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                  Actions
-                </th>
+                {user?.role === "admin" && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -155,8 +160,9 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
                       {product.stock}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium">
-                    <button
+                  {user?.role === "admin" && (
+                    <td className="px-6 py-4 text-sm font-medium">
+                      <button
                       onClick={() => {
                         setEditingProduct(product);
                         setShowAddProductModal(true);
@@ -180,9 +186,10 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
                       }}
                       className="text-red-600 hover:text-red-900 hover:bg-gray-100 rounded-md px-2 py-1"
                     >
-                      Delete
-                    </button>
-                  </td>
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -10,6 +10,7 @@ import {
   ChevronDown,
   X,
   Wrench,
+  Package,
 } from "lucide-react";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
@@ -18,12 +19,15 @@ import RequestDetailsModal from "@/components/ui/details-modal";
 import RequestModal from "../ui/request-modal";
 import { parseServerRequest } from "@/types";
 import { Product } from "@/types/product.types";
+import Inventory from "../ui/inventory";
+import useUser from "@/hooks/useUser";
 
 export type PageProps = {
   products: Product[];
 };
 
 export default function EmployeeView({ products }: PageProps) {
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState("my-requests");
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
   const [requestType, setRequestType] = useState("supply");
@@ -116,15 +120,17 @@ export default function EmployeeView({ products }: PageProps) {
 
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Request Dashboard
+            {activeTab === "my-requests" ? "Request Dashboard" : "Inventory"}
           </h1>
-          <button
-            onClick={() => setShowNewRequestModal(true)}
-            className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
-          >
-            <Plus size={20} className="mr-2" />
-            New Request
-          </button>
+          {activeTab === "my-requests" && (
+            <button
+              onClick={() => setShowNewRequestModal(true)}
+              className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
+            >
+              <Plus size={20} className="mr-2" />
+              New Request
+            </button>
+          )}
         </div>
 
         <div className="border-b border-gray-200 mb-6">
@@ -140,54 +146,70 @@ export default function EmployeeView({ products }: PageProps) {
               <FileText size={16} className="mr-1" />
               My Requests
             </button>
+
+            <button
+              onClick={() => setActiveTab("inventory")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+                activeTab === "inventory"
+                  ? "border-[#E31937] text-[#E31937]"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <Package size={16} className="mr-1" />
+              Inventory
+            </button>
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {myRequests.map((request) => (
-            <div
-              key={request.id}
-              className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center">
-                  {getTypeIcon(request.requestType)}
-                  <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
-                    {request.requestType}
-                  </span>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                    request.status
-                  )}`}
-                >
-                  {request.status}
-                </span>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {request.request}
-              </h3>
-              <div className="mt-4 text-xs text-gray-500">
-                <div className="flex justify-between">
-                  <span>
-                    Created:{" "}
-                    {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm:A")}
-                  </span>
-                  <span>
-                    Updated:{" "}
-                    {dayjs(request.updatedAt).format("MMM DD, YYYY hh:mm:A")}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedRequest(request)}
-                className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+        {activeTab === "my-requests" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {myRequests.map((request) => (
+              <div
+                key={request.id}
+                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
               >
-                View Details
-              </button>
-            </div>
-          ))}
-        </div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center">
+                    {getTypeIcon(request.requestType)}
+                    <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
+                      {request.requestType}
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                      request.status
+                    )}`}
+                  >
+                    {request.status}
+                  </span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {request.request}
+                </h3>
+                <div className="mt-4 text-xs text-gray-500">
+                  <div className="flex justify-between">
+                    <span>
+                      Created:{" "}
+                      {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm:A")}
+                    </span>
+                    <span>
+                      Updated:{" "}
+                      {dayjs(request.updatedAt).format("MMM DD, YYYY hh:mm:A")}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedRequest(request)}
+                  className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === "inventory" && <Inventory products={products} />}
       </main>
 
       {showNewRequestModal && (
