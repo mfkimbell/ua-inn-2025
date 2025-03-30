@@ -121,6 +121,15 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
   .filter(r => r.status === Status.DELIVERED || r.status === Status.APPROVED)
   .reduce((sum, req) => sum + (req.cost || 0), 0);
 
+  const statusData = [
+    { status: 'pending', count: pendingRequests },
+    { status: 'approved', count: filteredRequests.filter(r => r.status === Status.APPROVED).length },
+    { status: 'denied', count: filteredRequests.filter(r => r.status === Status.DENIED).length },
+    { status: 'delivered', count: filteredRequests.filter(r => r.status === Status.DELIVERED).length },
+    { status: 'ordered', count: filteredRequests.filter(r => r.status === Status.ORDERED).length },
+    { status: 'completed', count: filteredRequests.filter(r => r.status === Status.COMPLETED).length }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header and filters */}
@@ -204,7 +213,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
               Request Status Distribution
             </h3>
           </div>
-          <RequestStatusPieChart requests={filteredRequests} />
+          <RequestStatusPieChart statusData={statusData} totalRequests={totalRequests}/>
         </div>
 
         {/* Request Types */}
