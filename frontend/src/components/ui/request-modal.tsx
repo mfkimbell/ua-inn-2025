@@ -197,7 +197,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   <input
                     type="text"
                     name="adminName"
-                    value={formData.adminName}
+                    value={user.username}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   />
