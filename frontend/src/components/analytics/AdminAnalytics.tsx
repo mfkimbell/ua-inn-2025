@@ -42,7 +42,6 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
     }
   };
 
-  // Filter requests by date range
   const filteredRequests = requests.filter(request => 
     dayjs(request.createdAt).isAfter(getStartDate())
   );
@@ -53,7 +52,6 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
 
   const suggestionsAmount = filteredSuggestions.length;
 
-  // Calculate key metrics
   const totalRequests = filteredRequests.length;
   
   const pendingRequests = filteredRequests.filter(r => r.status === Status.PENDING).length;
@@ -67,19 +65,11 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
 
   const avgResponseTime = calculateAvgResponseTime(filteredRequests);
 
-  // For request types breakdown
   const supplyRequests = filteredRequests.filter(r => r.requestType === "supply").length;
   const maintenanceRequests = filteredRequests.filter(r => r.requestType === "maintenance").length;
   const otherRequests = totalRequests - supplyRequests - maintenanceRequests;
 
-  // Generate data for top requested items
   const topItems = getTopRequestedItems(filteredRequests);
-
-  // Handle refresh - in a real app this would trigger data refetch
-  const handleRefresh = () => {
-    setLastUpdated(dayjs().format("MMMM D, YYYY h:mm A"));
-    // You would typically call a function here to refresh data from API
-  };
 
   // Helper function to calculate average response time (in days)
   function calculateAvgResponseTime(reqs: Request[]): number {
@@ -138,12 +128,12 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
           <h2 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
           <p className="text-sm text-gray-500">
             Last updated: {lastUpdated} 
-            <button 
+            {/* <button 
               onClick={handleRefresh}
               className="ml-2 text-[#E31937] hover:text-[#c01731] inline-flex items-center"
             >
               <RefreshCw size={14} className="mr-1" /> Refresh
-            </button>
+            </button> */}
           </p>
         </div>
         
