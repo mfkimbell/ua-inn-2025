@@ -128,7 +128,7 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
         for _ in range(num_records):
             suggestion = Suggestion(
                 user_id=choice(users).id,
-                suggestion=fake.text(max_nb_chars=200),
+                suggestion=fake.text(max_nb_chars=30),
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
             )

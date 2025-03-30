@@ -42,7 +42,7 @@ async def get_all_suggestions(
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    return read_all_from_db(db, Suggestion)
+    return read_all_from_db(db, Suggestion, sort=True)
 
 
 @router.post("/suggestion")
@@ -52,7 +52,7 @@ async def create_suggestion(
     db: Session = Depends(get_db),
 ):
     suggestion.user_id = user.id
-    suggestion.user_name = user.first_name
+    suggestion.user_name = user.username
 
     return create_record(db, Suggestion, suggestion.model_dump())
 
@@ -71,13 +71,19 @@ async def update_suggestion(
     return update_record(db, Suggestion, suggestion.model_dump())
 
 
-@router.delete("/suggestion")
+class DeleteSuggestionRequest(BaseModel):
+    suggestion_id: int
+
+
+@router.post("/suggestion/delete")
 async def delete_suggestion(
-    suggestion_id: int,
+    request: DeleteSuggestionRequest,
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    db_suggestion = db.query(Suggestion).filter(Suggestion.id == suggestion_id).first()
+    db_suggestion = (
+        db.query(Suggestion).filter(Suggestion.id == request.suggestion_id).first()
+    )
 
     if not db_suggestion:
         raise HTTPException(status_code=404, detail="Suggestion not found")

@@ -7,16 +7,31 @@ import { Suggestion } from "./suggestion.types";
 import { ServerSuggestion } from "./suggestion.types";
 
 export const parseServerSuggestion = (
-  serverSuggestion: ServerSuggestion
-): Suggestion => {
+  serverSuggestion: ServerSuggestion[]
+): Suggestion[] => {
+  return serverSuggestion.map((suggestion) => ({
+    ...suggestion,
+    userId: suggestion.user_id,
+    createdAt: suggestion.created_at,
+    updatedAt: suggestion.updated_at,
+    completedAt: suggestion.completed_at,
+    userName: suggestion.user_name,
+    isAnonymous: suggestion.is_anonymous,
+  }));
+};
+
+export const parseClientSuggestion = (
+  clientSuggestion: Suggestion
+): Partial<ServerSuggestion> => {
   return {
-    ...serverSuggestion,
-    userId: serverSuggestion.user_id,
-    createdAt: serverSuggestion.created_at,
-    updatedAt: serverSuggestion.updated_at,
-    completedAt: serverSuggestion.completed_at,
-    userName: serverSuggestion.user_name,
-    isAnonymous: serverSuggestion.is_anonymous,
+    id: clientSuggestion.id,
+    suggestion: clientSuggestion.suggestion,
+    user_id: clientSuggestion.userId,
+    user_name: clientSuggestion.userName,
+    is_anonymous: clientSuggestion.isAnonymous,
+    created_at: clientSuggestion.createdAt,
+    updated_at: clientSuggestion.updatedAt,
+    completed_at: clientSuggestion.completedAt,
   };
 };
 

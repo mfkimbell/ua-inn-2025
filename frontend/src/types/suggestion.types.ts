@@ -4,7 +4,7 @@ export type ServerSuggestion = {
   suggestion: string;
   created_at: string;
   updated_at: string;
-  completed_at: string;
+  completed_at?: string;
   comments: string;
   user_name: string;
   is_anonymous: boolean;
@@ -15,7 +15,7 @@ export type Suggestion = {
   userId: number;
   createdAt: string;
   updatedAt: string;
-  completedAt: string;
+  completedAt?: string;
   suggestion: string;
   comments: string;
   userName: string;

@@ -25,7 +25,8 @@ import { Product } from "@/types/product.types";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import { Suggestion } from "@/types/suggestion.types";
-import { parseServerRequest } from "@/types";
+import { parseServerRequest, parseServerSuggestion } from "@/types";
+import { SuggestionsService } from "@/lib/suggestions-service";
 
 export type PageProps = {
   products: Product[];
@@ -101,7 +102,14 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
       const dbRequests = await RequestService.getAllRequests();
       setRequests(dbRequests);
     };
+
+    const fetchSuggestions = async () => {
+      const dbSuggestions = await SuggestionsService.getAllSuggestions();
+      setSuggestions(dbSuggestions);
+    };
+
     fetchRequests();
+    fetchSuggestions();
   }, []);
 
   const filteredRequests = requests.filter((req) => {
@@ -181,6 +189,41 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     setInventory((prev) =>
       prev.map((item) => (item.id === product.id ? product : item))
     );
+  };
+
+  const handleSuggestionSave = async (suggestion: Suggestion) => {
+    let data = suggestion;
+
+    if (!data.completedAt) {
+      data.completedAt = undefined;
+      data.id = Math.floor(Math.random() * 1000000);
+    }
+
+    const newSuggestion = await SuggestionsService.createSuggestion(data);
+
+    setSuggestions((prev) => [
+      parseServerSuggestion([newSuggestion])[0],
+      ...prev,
+    ]);
+  };
+
+  const handleSuggestionUpdate = async (suggestion: Suggestion) => {
+    const updatedSuggestion = await SuggestionsService.updateSuggestion(
+      suggestion
+    );
+
+    setSuggestions((prev) =>
+      prev.map((item) =>
+        item.id === suggestion.id
+          ? parseServerSuggestion([updatedSuggestion])[0]
+          : item
+      )
+    );
+  };
+
+  const handleSuggestionDelete = async (id: number) => {
+    await SuggestionsService.deleteSuggestion(id);
+    setSuggestions((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (
@@ -514,10 +557,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                 key={sugg.id}
                 className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs uppercase text-gray-500 font-medium">
-                    Suggestion ID: {sugg.id}
-                  </span>
+                <div className="flex justify-end items-start mb-4">
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     {getSuggestionStatus(sugg)}
                   </span>
@@ -529,8 +569,14 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   Submitted by: {sugg.isAnonymous ? "anonymous" : sugg.userName}
                 </p>
                 <div className="mt-4 text-xs text-gray-500">
-                  <div>Created: {sugg.createdAt}</div>
-                  <div>Updated: {sugg.updatedAt}</div>
+                  <div>
+                    Created:{" "}
+                    {dayjs(sugg.createdAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
+                  <div>
+                    Updated:{" "}
+                    {dayjs(sugg.updatedAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <button
@@ -544,7 +590,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   </button>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleDelete("suggestion", sugg.id)}
+                      onClick={() => handleSuggestionDelete(sugg.id)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 size={18} />
@@ -589,19 +635,9 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           onClose={() => setShowSuggestionModal(false)}
           onSave={(updatedSuggestion) => {
             if (selectedSuggestion) {
-              setSuggestions((prev) =>
-                prev.map((sugg) =>
-                  sugg.id === updatedSuggestion.id ? updatedSuggestion : sugg
-                )
-              );
+              handleSuggestionUpdate(updatedSuggestion);
             } else {
-              setSuggestions((prev) => [
-                ...prev,
-                {
-                  ...updatedSuggestion,
-                  id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-                },
-              ]);
+              handleSuggestionSave(updatedSuggestion);
             }
             setShowSuggestionModal(false);
           }}

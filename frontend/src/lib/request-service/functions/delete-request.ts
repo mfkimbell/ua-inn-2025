@@ -1,5 +1,4 @@
 import { fetch } from "@/lib/utils";
-import { ServerRequest } from "@/types/request.types";
 
 export const deleteRequest = async (requestId: number): Promise<boolean> => {
   const response = await fetch<{ success: boolean }>("/request/delete", {

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Suggestion } from "@/types/suggestion.types";
+import useUser from "@/hooks/useUser";
 
 interface SuggestionModalProps {
   suggestion: Suggestion | null;
@@ -14,11 +15,12 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const { user } = useUser();
   const [formData, setFormData] = useState<Suggestion>({
     id: suggestion?.id || 0,
     userId: suggestion?.userId || 0,
-    createdAt: suggestion?.createdAt || new Date().toISOString().split("T")[0],
-    updatedAt: suggestion?.updatedAt || new Date().toISOString().split("T")[0],
+    createdAt: suggestion?.createdAt || new Date().toISOString(),
+    updatedAt: suggestion?.updatedAt || new Date().toISOString(),
     completedAt: suggestion?.completedAt || "",
     suggestion: suggestion?.suggestion || "",
     comments: suggestion?.comments || "",
@@ -107,7 +109,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
               <input
                 type="text"
                 name="userName"
-                value={formData.userName}
+                value={user.username}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 required
