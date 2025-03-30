@@ -1,6 +1,7 @@
 import { Status } from "./status.enum";
 
 export type ServerRequest = {
+  is_anonymous: boolean;
   id: number;
   status: Status;
   user_id: number;
@@ -20,6 +21,7 @@ export type ServerRequest = {
 };
 
 export type Request = {
+  isAnonymous: boolean;
   id: number;
   status: Status;
   userId: number;

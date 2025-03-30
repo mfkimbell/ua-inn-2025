@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Product } from "@/types/product.types";
-import useUser from "@/hooks/useUser";
 
 interface AddProductModalProps {
   product: Product | null;

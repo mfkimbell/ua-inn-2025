@@ -78,14 +78,12 @@ const statusOptions = [
 ];
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
-  const initialProducts = products;
   const [activeTab, setActiveTab] = useState<
     "requests" | "suggestions" | "inventory" | "analytics"
   >("requests");
 
   const [requests, setRequests] = useState<Request[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [inventory, setInventory] = useState<Product[]>(initialProducts);
 
   const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
   const [reqFilterStartDate, setReqFilterStartDate] = useState<string>("");
@@ -180,19 +178,8 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     setRequests((prev) => [parseServerRequest([newRequest])[0], ...prev]);
   };
 
-  const handleAddInventoryItem = () => {
-    // TODO: Implement add inventory item
-    console.log("Add inventory item");
-  };
-
-  const handleEditInventoryItem = (product: Product) => {
-    setInventory((prev) =>
-      prev.map((item) => (item.id === product.id ? product : item))
-    );
-  };
-
   const handleSuggestionSave = async (suggestion: Suggestion) => {
-    let data = suggestion;
+    const data = suggestion;
 
     if (!data.completedAt) {
       data.completedAt = undefined;
@@ -604,14 +591,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           </div>
         )}
 
-        {activeTab === "inventory" && (
-          <Inventory
-            products={products}
-            onAddItem={handleAddInventoryItem}
-            onEditItem={handleEditInventoryItem}
-            onDeleteItem={() => {}}
-          />
-        )}
+        {activeTab === "inventory" && <Inventory products={products} />}
       </main>
 
       {/* Modals */}

@@ -1,6 +1,14 @@
 // components/analytics/charts/TopItemsChart.tsx
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 type TopItemsChartProps = {
   items: Array<{
@@ -11,13 +19,24 @@ type TopItemsChartProps = {
 
 const TopItemsChart: React.FC<TopItemsChartProps> = ({ items }) => {
   // Format items for display (truncate long names)
-  const data = items.map(item => ({
-    name: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name,
+  const data = items.map((item) => ({
+    name:
+      item.name.length > 15 ? item.name.substring(0, 15) + "..." : item.name,
     fullName: item.name,
-    count: item.count
+    count: item.count,
   }));
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active: boolean;
+    payload: {
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      [x: string]: any;
+      value: number;
+    }[];
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border border-gray-200 rounded shadow-sm text-xs">
@@ -44,25 +63,22 @@ const TopItemsChart: React.FC<TopItemsChartProps> = ({ items }) => {
             layout="vertical"
             barSize={20}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={true} vertical={false} />
-            <XAxis 
-              type="number" 
-              tick={{ fontSize: 12 }}
-              stroke="#9ca3af"
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#f0f0f0"
+              horizontal={true}
+              vertical={false}
             />
-            <YAxis 
-              dataKey="name" 
-              type="category" 
+            <XAxis type="number" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+            <YAxis
+              dataKey="name"
+              type="category"
               tick={{ fontSize: 12 }}
               width={100}
               stroke="#9ca3af"
             />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar 
-              dataKey="count" 
-              fill="#E31937" 
-              radius={[0, 4, 4, 0]} 
-            />
+            <Tooltip content={<CustomTooltip active={true} payload={[]} />} />
+            <Bar dataKey="count" fill="#E31937" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
       ) : (

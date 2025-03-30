@@ -12,6 +12,17 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  cookies: {
+    sessionToken: {
+      name: "__session",
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        sameSite: "lax",
+      },
+    },
+  },
   pages: {
     signOut: "/auth/signout",
   },

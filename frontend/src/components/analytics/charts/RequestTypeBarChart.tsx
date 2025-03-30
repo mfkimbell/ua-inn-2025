@@ -1,6 +1,15 @@
 // components/analytics/charts/RequestTypeBarChart.tsx
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 
 type RequestTypeBarChartProps = {
   supplyCount: number;
@@ -11,32 +20,41 @@ type RequestTypeBarChartProps = {
 const RequestTypeBarChart: React.FC<RequestTypeBarChartProps> = ({
   supplyCount,
   maintenanceCount,
-  otherCount
+  otherCount,
 }) => {
   const data = [
     {
-      name: 'Supply',
+      name: "Supply",
       count: supplyCount,
-      fill: '#3b82f6' // Blue
+      fill: "#3b82f6", // Blue
     },
     {
-      name: 'Maintenance',
+      name: "Maintenance",
       count: maintenanceCount,
-      fill: '#ef4444' // Red
+      fill: "#ef4444", // Red
     },
     {
-      name: 'Other',
+      name: "Other",
       count: otherCount,
-      fill: '#9ca3af' // Gray
-    }
-  ].filter(item => item.count > 0); // Only include types with requests
+      fill: "#9ca3af", // Gray
+    },
+  ].filter((item) => item.count > 0); // Only include types with requests
 
   const total = supplyCount + maintenanceCount + otherCount;
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active: boolean;
+    payload: { value: number }[];
+    label: string;
+  }) => {
     if (active && payload && payload.length) {
-      const percentage = total > 0 ? ((payload[0].value / total) * 100).toFixed(1) : '0.0';
-      
+      const percentage =
+        total > 0 ? ((payload[0].value / total) * 100).toFixed(1) : "0.0";
+
       return (
         <div className="bg-white p-2 border border-gray-200 rounded shadow-sm text-xs">
           <p className="font-medium">{label}</p>
@@ -62,18 +80,18 @@ const RequestTypeBarChart: React.FC<RequestTypeBarChartProps> = ({
             }}
             barSize={40}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-            <XAxis 
-              dataKey="name" 
-              tick={{ fontSize: 12 }}
-              stroke="#9ca3af"
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#f0f0f0"
+              vertical={false}
             />
-            <YAxis 
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+            <YAxis
               allowDecimals={false}
               tick={{ fontSize: 12 }}
               stroke="#9ca3af"
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip active={true} payload={[]} label={""} />} />
             <Bar dataKey="count" radius={[4, 4, 0, 0]}>
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />

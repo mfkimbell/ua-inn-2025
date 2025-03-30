@@ -100,12 +100,7 @@ class Request(Base):
     item_name = Column(String)
     completed_at = Column(DateTime)
     user_name = Column(String)
-
-    # Specify the foreign key for user_id relationship
-    user = relationship("User", backref="requests", foreign_keys=[user_id])
-
-    # Specify the foreign key for admin relationship
-    admin_user = relationship("User", backref="admin_requests", foreign_keys=[admin])
+    admin_name = Column(String)
 
 
 @final

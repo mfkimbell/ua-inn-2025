@@ -37,6 +37,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
     orderedAmount: request?.orderedAmount || 0,
     itemName: request?.itemName || "",
     comments: request?.comments || "",
+    isAnonymous: request?.isAnonymous || false,
   });
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     if (name === "orderedAmount") {
       setFormData((prev) => ({
         ...prev,

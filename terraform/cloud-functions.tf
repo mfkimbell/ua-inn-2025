@@ -12,10 +12,28 @@ resource "google_cloudfunctions_function" "nextjs_function" {
 
   trigger_http = true
 
-  environment_variables = {
-    NODE_ENV = "production"
-    API_URL = google_secret_manager_secret.API_URL.id
-    NEXTAUTH_SECRET = google_secret_manager_secret.NEXTAUTH_SECRET.id
+  secret_environment_variables {
+    key     = "API_URL"
+    secret  = "API_URL"
+    version = 1
+  }
+
+  secret_environment_variables {
+    key     = "NEXTAUTH_SECRET"
+    secret  = "NEXTAUTH_SECRET"
+    version = 2
+  }
+
+  secret_environment_variables {
+    key     = "NEXTAUTH_URL"
+    secret  = "NEXTAUTH_URL"
+    version = 1
+  }
+
+  secret_environment_variables {
+    key     = "JWT_SECRET"
+    secret  = "JWT_SECRET"
+    version = 2
   }
 }
 
@@ -30,12 +48,23 @@ resource "google_cloudfunctions_function_iam_member" "public_invoker" {
 resource "google_secret_manager_secret_iam_member" "cloud_function_access_api_url" {
   secret_id = google_secret_manager_secret.API_URL.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloudfunctions_function.nextjs_function.service_account_email}"
+  member    = "serviceAccount:uahackathon-455214@appspot.gserviceaccount.com"
 }
-
 
 resource "google_secret_manager_secret_iam_member" "cloud_function_access_nextauth_secret" {
   secret_id = google_secret_manager_secret.NEXTAUTH_SECRET.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloudfunctions_function.nextjs_function.service_account_email}"
+  member    = "serviceAccount:uahackathon-455214@appspot.gserviceaccount.com"
+}
+
+resource "google_secret_manager_secret_iam_member" "cloud_function_access_nextauth_url" {
+  secret_id = google_secret_manager_secret.NEXTAUTH_URL.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:uahackathon-455214@appspot.gserviceaccount.com"
+}
+
+resource "google_secret_manager_secret_iam_member" "cloud_function_access_jwt_secret" {
+  secret_id = google_secret_manager_secret.JWT_SECRET.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:uahackathon-455214@appspot.gserviceaccount.com"
 }

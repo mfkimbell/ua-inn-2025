@@ -1,12 +1,6 @@
 // components/analytics/AdminAnalytics.tsx
 import { useState } from "react";
-import {
-  BarChart,
-  PieChart,
-  LineChart,
-  TrendingUp,
-  RefreshCw,
-} from "lucide-react";
+import { BarChart, PieChart, LineChart, TrendingUp } from "lucide-react";
 import { Request, Suggestion } from "@/types";
 import { Status } from "@/types/status.enum";
 import dayjs from "dayjs";
@@ -28,9 +22,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
   const [timeRange, setTimeRange] = useState<
     "week" | "month" | "quarter" | "year"
   >("month");
-  const [lastUpdated, setLastUpdated] = useState<string>(
-    dayjs().format("MMMM D, YYYY h:mm A")
-  );
+  const [lastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
 
   // Get start date based on selected time range
   const getStartDate = () => {

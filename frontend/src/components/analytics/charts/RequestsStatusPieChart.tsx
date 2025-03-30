@@ -1,6 +1,13 @@
 // Components/analytics/charts/RequestStatusPieChart.tsx
-import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import React from "react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from "recharts";
 
 type StatusData = {
   status: string;
@@ -13,46 +20,56 @@ type RequestStatusPieChartProps = {
 };
 
 const COLORS: Record<string, string> = {
-  'pending': '#f59e0b',     // Amber
-  'approved': '#3b82f6',    // Blue
-  'denied': '#ef4444',      // Red
-  'delivered': '#10b981',   // Green
-  'ordered': '#8b5cf6',     // Purple
-  'completed': '#10b981',   // Green
+  pending: "#f59e0b", // Amber
+  approved: "#3b82f6", // Blue
+  denied: "#ef4444", // Red
+  delivered: "#10b981", // Green
+  ordered: "#8b5cf6", // Purple
+  completed: "#10b981", // Green
 };
 
-const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ statusData, totalRequests }) => {
+const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({
+  statusData,
+  totalRequests,
+}) => {
   // Format data for the chart
   const chartData = statusData
-    .filter(item => item.count > 0) // Only include statuses with requests
-    .map(item => {
+    .filter((item) => item.count > 0) // Only include statuses with requests
+    .map((item) => {
       const statusKey = item.status.toLowerCase();
       return {
         name: item.status.charAt(0).toUpperCase() + item.status.slice(1), // Capitalize
         value: item.count,
-        color: statusKey in COLORS ? COLORS[statusKey] : '#9ca3af' // Type-safe check
+        color: statusKey in COLORS ? COLORS[statusKey] : "#9ca3af", // Type-safe check
       };
     });
 
   // Custom renderer for the label
-  const renderCustomLabel = ({ 
-    cx, 
-    cy, 
-    midAngle, 
-    innerRadius, 
-    outerRadius, 
-    percent 
-  }: any) => {
+  const renderCustomLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+  }: {
+    cx: number;
+    cy: number;
+    midAngle: number;
+    innerRadius: number;
+    outerRadius: number;
+    percent: number;
+  }) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
-    const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
-    
+    const x = cx + radius * Math.cos((-midAngle * Math.PI) / 180);
+    const y = cy + radius * Math.sin((-midAngle * Math.PI) / 180);
+
     return percent > 0.05 ? (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor="middle" 
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor="middle"
         dominantBaseline="central"
         fontSize={12}
         fontWeight="bold"
@@ -62,7 +79,17 @@ const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ statusDat
     ) : null;
   };
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active: boolean;
+    payload: {
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      [x: string]: any;
+      value: number;
+    }[];
+  }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -95,7 +122,7 @@ const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ statusDat
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip active={true} payload={[]} />} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

@@ -25,7 +25,6 @@ import RequestModal from "../ui/request-modal";
 import SuggestionModal from "../ui/suggestion-modal";
 import SuggestionDetailsModal from "../ui/suggestion-details-modal";
 import Inventory from "../ui/inventory";
-import useUser from "@/hooks/useUser";
 import { Product } from "@/types/product.types";
 
 export type PageProps = {
@@ -61,7 +60,6 @@ const getTypeIcon = (type: string) => {
 };
 
 const EmployeeView: React.FC<PageProps> = ({ products }) => {
-  const { user } = useUser();
   // Extend activeTab union to include "inventory"
   const [activeTab, setActiveTab] = useState<
     "my-requests" | "my-suggestions" | "inventory"
@@ -74,8 +72,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
     useState<Suggestion | null>(null);
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
   const [showNewSuggestionModal, setShowNewSuggestionModal] = useState(false);
-  const [showSuggestionDetailsModal, setShowSuggestionDetailsModal] =
-    useState(false);
 
   // Filter states for Requests
   const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
@@ -88,9 +84,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
   const [suggFilterStartDate, setSuggFilterStartDate] = useState<string>("");
   const [suggFilterEndDate, setSuggFilterEndDate] = useState<string>("");
   const [showSuggDateRange, setShowSuggDateRange] = useState<boolean>(false);
-
-  // Inventory state
-  const [inventory, setInventory] = useState<Product[]>(products);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -105,7 +98,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
     fetchSuggestions();
   }, []);
 
-  const filteredRequests = myRequests.filter((req) => {
+  const filteredRequests = myRequests.filter((req: Request) => {
     const statusMatch =
       reqFilterStatus === "all" || req.status.toLowerCase() === reqFilterStatus;
     const dateMatch =
@@ -132,7 +125,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
 
   const handleNewSuggestion = async (suggestion: Suggestion) => {
     // If completedAt is empty, set it to undefined (to avoid sending an empty string)
-    let data = { ...suggestion };
+    const data = suggestion;
     if (!data.completedAt || data.completedAt.trim() === "") {
       data.completedAt = undefined;
       data.id = Math.floor(Math.random() * 1000000);
@@ -155,18 +148,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
           ? parseServerSuggestion([updatedSuggestion])[0]
           : s
       )
-    );
-  };
-
-  // Inventory handlers (example logic)
-  const handleAddInventoryItem = () => {
-    // Implement your logic to add an inventory item
-    console.log("Add inventory item");
-  };
-
-  const handleEditInventoryItem = (product: Product) => {
-    setInventory((prev) =>
-      prev.map((item) => (item.id === product.id ? product : item))
     );
   };
 
@@ -417,7 +398,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
         {/* Requests List */}
         {activeTab === "my-requests" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRequests.map((request) => (
+            {filteredRequests.map((request: Request) => (
               <div
                 key={request.id}
                 className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -442,7 +423,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                 </h3>
                 <p className="text-sm text-gray-700 mb-2">
                   Submitted by:{" "}
-                  {request.is_anonymous ? "anonymous" : request.userName}
+                  {request.isAnonymous ? "anonymous" : request.userName}
                 </p>
                 <div className="mt-4 text-xs text-gray-500">
                   <div className="flex flex-col justify-between">
@@ -514,26 +495,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
           </div>
         )}
 
-        {activeTab === "inventory" && (
-          <Inventory
-            products={products}
-            onAddItem={() => {
-              // You can implement your inventory add logic here
-              console.log("Add inventory item");
-            }}
-            onEditItem={(product) => {
-              // Inventory edit logic
-              setInventory((prev) =>
-                prev.map((item) => (item.id === product.id ? product : item))
-              );
-            }}
-            onDeleteItem={(productId) => {
-              setInventory((prev) =>
-                prev.filter((item) => item.id !== productId)
-              );
-            }}
-          />
-        )}
+        {activeTab === "inventory" && <Inventory products={products} />}
       </main>
 
       {/* Modals */}
@@ -572,7 +534,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
               handleSuggestionUpdate(updatedSuggestion);
             } else {
               // Ensure new suggestion doesn't pass an empty completedAt
-              let data = { ...updatedSuggestion };
+              const data = updatedSuggestion;
               if (!data.completedAt || data.completedAt.trim() === "") {
                 data.completedAt = undefined;
                 data.id = Math.floor(Math.random() * 1000000);

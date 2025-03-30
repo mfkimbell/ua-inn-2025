@@ -163,3 +163,7 @@ cython_debug/
 *.zip
 */.terraform/*
 */.terraform.lock.hcl
+terraform.tfvars
+frontend/functions/.next
+*/node_modules/*
+*.zip

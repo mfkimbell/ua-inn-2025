@@ -64,6 +64,7 @@ export const parseServerRequest = (
     requestedAmount: request.requested_amount,
     orderedAmount: request.ordered_amount,
     itemName: request.item_name,
+    isAnonymous: request.is_anonymous,
   }));
 };
 

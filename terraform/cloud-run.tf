@@ -51,3 +51,10 @@ resource "google_cloud_run_service" "worksync_api_service" {
     }
   }
 }
+
+resource "google_cloud_run_service_iam_member" "allow_sa_invoke" {
+  service  = google_cloud_run_service.worksync_api_service.name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}

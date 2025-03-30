@@ -37,3 +37,10 @@ resource "google_secret_manager_secret" "NEXTAUTH_SECRET" {
     auto {}
   }
 }
+
+resource "google_secret_manager_secret" "NEXTAUTH_URL" {
+  secret_id = "NEXTAUTH_URL"
+  replication {
+    auto {}
+  }
+}

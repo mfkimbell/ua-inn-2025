@@ -1,4 +1,4 @@
-import { Plus, Package, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Product } from "@/types/product.types";
 import { useState, useMemo } from "react";
 import Image from "next/image";
@@ -163,29 +163,29 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
                   {user?.role === "admin" && (
                     <td className="px-6 py-4 text-sm font-medium">
                       <button
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setShowAddProductModal(true);
-                      }}
-                      className="text-[#E31937] hover:text-[#c01731] hover:bg-gray-100 rounded-md px-2 py-1 mr-3"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={async () => {
-                        try {
-                          setEditingProduct(null);
-                          setShowAddProductModal(false);
-                          await ProductsService.deleteProduct(product.id);
-                          setCurrentProducts((prev) =>
-                            prev.filter((p) => p.id !== product.id)
-                          );
-                        } catch (error) {
-                          console.error("Error deleting product:", error);
-                        }
-                      }}
-                      className="text-red-600 hover:text-red-900 hover:bg-gray-100 rounded-md px-2 py-1"
-                    >
+                        onClick={() => {
+                          setEditingProduct(product);
+                          setShowAddProductModal(true);
+                        }}
+                        className="text-[#E31937] hover:text-[#c01731] hover:bg-gray-100 rounded-md px-2 py-1 mr-3"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            setEditingProduct(null);
+                            setShowAddProductModal(false);
+                            await ProductsService.deleteProduct(product.id);
+                            setCurrentProducts((prev) =>
+                              prev.filter((p) => p.id !== product.id)
+                            );
+                          } catch (error) {
+                            console.error("Error deleting product:", error);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-900 hover:bg-gray-100 rounded-md px-2 py-1"
+                      >
                         Delete
                       </button>
                     </td>
