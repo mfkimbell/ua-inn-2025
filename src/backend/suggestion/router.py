@@ -27,6 +27,7 @@ class SuggestionRequest(BaseModel):
     updated_at: datetime.datetime | None = None
     completed_at: datetime.datetime | None = None
     comments: str | None = None
+    is_anonymous: bool | None = None
 
 
 @router.get("/suggestion")
