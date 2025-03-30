@@ -26,3 +26,23 @@ Built in 24 hours for UA Hackathon 2025. This project automatically provisions i
 - **Artifact Registry** – Secure storage of Docker images  
 - **Secrets Manager** – Manages secrets for the application  
 
+
+### Landing Page
+<img width="1360" alt="Screenshot 2025-03-30 at 12 57 33 AM" src="https://github.com/user-attachments/assets/51b15b4c-5239-44e2-9fc3-cd63cc03b256" />
+
+### Admin Requests
+<img width="1360" alt="Screenshot 2025-03-30 at 12 57 23 AM" src="https://github.com/user-attachments/assets/e6513673-2872-4b8a-81bf-fb4604233528" />
+
+### Admin Suggestions
+<img width="1354" alt="Screenshot 2025-03-30 at 12 59 11 AM" src="https://github.com/user-attachments/assets/f43e8498-87e1-4eab-8945-83dfb55b8044" />
+
+### Admin Inventory
+<img width="1322" alt="Screenshot 2025-03-30 at 12 58 49 AM" src="https://github.com/user-attachments/assets/f5932133-d72b-4979-9f6e-8c2395a54aae" />
+
+### Admin Analytics
+<img width="1314" alt="Screenshot 2025-03-30 at 12 59 39 AM" src="https://github.com/user-attachments/assets/6547b961-63d4-432d-8ed2-d27d10fbf5ab" />
+
+### Employee Requests
+<img width="1306" alt="Screenshot 2025-03-30 at 1 00 13 AM" src="https://github.com/user-attachments/assets/d71a3716-7b7a-4a6c-89e5-b24e7e068634" />
+
+and so on...
