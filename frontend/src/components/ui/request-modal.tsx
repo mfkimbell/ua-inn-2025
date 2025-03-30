@@ -163,6 +163,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
+                  disabled={user.role === "employee"}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 >
                   <option value={Status.PENDING}>{Status.PENDING}</option>
