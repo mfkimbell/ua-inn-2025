@@ -21,7 +21,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
 }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState<Request>({
-    id: request?.id || 0,
+    id: request?.id || Math.floor(Math.random() * 1000000),
     status: request?.status || Status.PENDING,
     userId: request?.userId || 0,
     request: request?.request || "",
@@ -141,18 +141,20 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ordered Amount
-                </label>
-                <input
-                  type="number"
-                  name="orderedAmount"
-                  value={formData.orderedAmount}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
+              {user.role === "admin" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ordered Amount
+                  </label>
+                  <input
+                    type="number"
+                    name="orderedAmount"
+                    value={formData.orderedAmount}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Status
@@ -172,41 +174,35 @@ const RequestModal: React.FC<RequestModalProps> = ({
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  User Name
-                </label>
-                <input
-                  type="text"
-                  name="userName"
-                  value={formData.userName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Cost
                 </label>
                 <input
                   type="number"
                   name="cost"
-                  value={formData.cost}
+                  value={(
+                    (products.find(
+                      (product) => product.title === formData.itemName
+                    )?.price || 0) * formData.requestedAmount
+                  ).toFixed(2)}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  disabled
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Admin Name
-                </label>
-                <input
-                  type="text"
-                  name="adminName"
-                  value={formData.adminName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
+              {user.role === "admin" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Admin Name
+                  </label>
+                  <input
+                    type="text"
+                    name="adminName"
+                    value={formData.adminName}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Comments Section (full width, placed two rows below the grid) */}

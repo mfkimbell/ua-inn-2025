@@ -41,8 +41,6 @@ const Inventory: React.FC<InventoryProps> = ({
     setCurrentPage(page);
   };
 
-  console.log(products);
-
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <div className="px-4 py-5 sm:p-6">

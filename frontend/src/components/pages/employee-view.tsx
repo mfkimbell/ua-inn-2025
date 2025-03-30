@@ -15,8 +15,15 @@ import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import AuthButton from "../auth/button";
 import RequestDetailsModal from "@/components/ui/details-modal";
+import RequestModal from "../ui/request-modal";
+import { parseServerRequest } from "@/types";
+import { Product } from "@/types/product.types";
 
-export default function EmployeeView() {
+export type PageProps = {
+  products: Product[];
+};
+
+export default function EmployeeView({ products }: PageProps) {
   const [activeTab, setActiveTab] = useState("my-requests");
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
   const [requestType, setRequestType] = useState("supply");
@@ -32,16 +39,6 @@ export default function EmployeeView() {
     };
     fetchRequests();
   }, []);
-
-  const handleNewRequest = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log({ requestType, requestTitle, requestDetails });
-    setShowNewRequestModal(false);
-
-    setRequestType("supply");
-    setRequestTitle("");
-    setRequestDetails("");
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -69,6 +66,12 @@ export default function EmployeeView() {
       default:
         return <Box size={20} className="text-[#E31937]" />;
     }
+  };
+
+  const handleNewRequest = async (request: Request) => {
+    const newRequest = await RequestService.createRequest(request);
+    setMyRequests((prev) => [parseServerRequest([newRequest])[0], ...prev]);
+    setShowNewRequestModal(false);
   };
 
   return (
@@ -175,9 +178,6 @@ export default function EmployeeView() {
                   </span>
                 </div>
               </div>
-              {/* <button className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
-                View Details
-              </button> */}
               <button
                 onClick={() => setSelectedRequest(request)}
                 className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
@@ -187,101 +187,15 @@ export default function EmployeeView() {
             </div>
           ))}
         </div>
-
-        {/* 
-        <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm p-12 text-center">
-          <Box size={48} className="text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No requests yet</h3>
-          <p className="text-gray-500 mb-4">Get started by creating a new request or suggestion</p>
-          <button 
-            onClick={() => setShowNewRequestModal(true)}
-            className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors"
-          >
-            Create Request
-          </button>
-        </div>
-        */}
       </main>
 
       {showNewRequestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-medium text-gray-900">
-                  New Request
-                </h2>
-                <button
-                  onClick={() => setShowNewRequestModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <form onSubmit={handleNewRequest}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Request Type
-                  </label>
-                  <select
-                    value={requestType}
-                    onChange={(e) => setRequestType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E31937] focus:border-transparent"
-                  >
-                    <option value="supply">Supply Request</option>
-                    <option value="maintenance">Maintenance Request</option>
-                    <option value="suggestion">Suggestion</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={requestTitle}
-                    onChange={(e) => setRequestTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E31937] focus:border-transparent"
-                    placeholder="Brief description of your request"
-                    required
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Details
-                  </label>
-                  <textarea
-                    value={requestDetails}
-                    onChange={(e) => setRequestDetails(e.target.value)}
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E31937] focus:border-transparent"
-                    placeholder="Provide additional information about your request"
-                    required
-                  />
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowNewRequestModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-[#E31937] hover:bg-[#c01731] text-white font-medium rounded-md transition-colors"
-                  >
-                    Submit Request
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        <RequestModal
+          request={selectedRequest}
+          products={products}
+          onClose={() => setShowNewRequestModal(false)}
+          onSave={handleNewRequest}
+        />
       )}
 
       {selectedRequest && (

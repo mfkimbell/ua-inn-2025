@@ -32,5 +32,5 @@ export default function Home() {
     return <AdminView products={products} />;
   }
 
-  return <EmployeeView />;
+  return <EmployeeView products={products} />;
 }
