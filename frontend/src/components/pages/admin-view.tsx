@@ -418,7 +418,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   <button
                     key={status}
                     onClick={() => setSuggFilterStatus(status)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
                       status === "all"
                         ? "bg-gray-200 text-gray-800"
                         : status === "pending"
