@@ -445,7 +445,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                   {request.is_anonymous ? "anonymous" : request.userName}
                 </p>
                 <div className="mt-4 text-xs text-gray-500">
-                  <div className="flex justify-between">
+                  <div className="flex flex-col justify-between">
                     <span>
                       Created:{" "}
                       {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm A")}
