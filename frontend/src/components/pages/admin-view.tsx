@@ -418,7 +418,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   <button
                     key={status}
                     onClick={() => setSuggFilterStatus(status)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
                       status === "all"
                         ? "bg-gray-200 text-gray-800"
                         : status === "pending"
@@ -502,9 +502,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                 <p className="text-sm text-gray-700 mb-2">
                   Submitted by: {req.userName}
                 </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  Item: {req.itemName}
-                </p>
+                {req.itemName && (
+                  <p className="text-sm text-gray-700 mb-2">
+                    Item: {req.itemName}
+                  </p>
+                )}
                 {req.cost > 0 && (
                   <p className="text-sm text-gray-700 mb-2">
                     Cost: ${req.cost.toFixed(2)}

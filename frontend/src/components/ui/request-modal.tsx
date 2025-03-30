@@ -55,9 +55,8 @@ const RequestModal: React.FC<RequestModalProps> = ({
       setFormData((prev) => ({
         ...prev,
         cost:
-          (products.find(
-            (product) => product.title === formData.itemName
-          )?.price || 0) * Number(value),
+          (products.find((product) => product.title === formData.itemName)
+            ?.price || 0) * Number(value),
       }));
     }
 
@@ -128,7 +127,6 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   value={formData.itemName}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
                 >
                   <option value="">Select an item</option>
                   {products.map((product) => (
@@ -183,23 +181,25 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   <option value={Status.ORDERED}>{Status.ORDERED}</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Cost
-                </label>
-                <input
-                  type="number"
-                  name="cost"
-                  value={(
-                    (products.find(
-                      (product) => product.title === formData.itemName
-                    )?.price || 0) * formData.orderedAmount
-                  ).toFixed(2)}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  disabled
-                />
-              </div>
+              {user.role === "admin" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Cost
+                  </label>
+                  <input
+                    type="number"
+                    name="cost"
+                    value={(
+                      (products.find(
+                        (product) => product.title === formData.itemName
+                      )?.price || 0) * formData.orderedAmount
+                    ).toFixed(2)}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    disabled
+                  />
+                </div>
+              )}
               {user.role === "admin" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
