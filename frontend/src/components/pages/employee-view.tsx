@@ -128,7 +128,7 @@ export default function EmployeeView() {
           <nav className="flex -mb-px">
             <button
               onClick={() => setActiveTab("my-requests")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm items-center ${
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                 activeTab === "my-requests"
                   ? "border-[#E31937] text-[#E31937]"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
