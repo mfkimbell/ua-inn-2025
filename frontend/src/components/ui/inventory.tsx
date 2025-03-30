@@ -1,6 +1,7 @@
 import { Plus, Package, Search } from "lucide-react";
 import { Product } from "@/types/product.types";
 import { useState, useMemo } from "react";
+import Image from "next/image";
 
 interface InventoryProps {
   products: Product[];
@@ -103,13 +104,24 @@ const Inventory: React.FC<InventoryProps> = ({
                 <tr key={product.id}>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <Package className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+                      <div className="flex-shrink-0 h-8 w-8 relative mr-3">
+                        <Image
+                          src={product.thumbnail}
+                          alt={product.title}
+                          width={30}
+                          height={30}
+                          className="object-cover rounded-sm"
+                          style={{ width: "100%", height: "100%" }}
+                        />
+                      </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium text-gray-900 truncate">
                           {product.title}
                         </div>
-                        <div className="text-sm text-gray-500 truncate max-w-sm">
-                          {product.description}
+                        <div className="flex items-center">
+                          <div className="text-sm text-gray-500 truncate max-w-sm">
+                            {product.description}
+                          </div>
                         </div>
                       </div>
                     </div>
