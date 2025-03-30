@@ -14,6 +14,8 @@ import {
   Wrench,
   Calendar,
   BarChart2,
+  LightbulbIcon,
+  PackageIcon,
 } from "lucide-react";
 import RequestModal from "@/components/ui/request-modal";
 import SuggestionModal from "@/components/ui/suggestion-modal";
@@ -262,32 +264,35 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           <nav className="flex -mb-px">
             <button
               onClick={() => setActiveTab("requests")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                 activeTab === "requests"
                   ? "border-[#E31937] text-[#E31937]"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
+              <FileText size={16} className="mr-1" />
               Requests
             </button>
             <button
               onClick={() => setActiveTab("suggestions")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                 activeTab === "suggestions"
                   ? "border-[#E31937] text-[#E31937]"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
+              <LightbulbIcon size={16} className="mr-1" />
               Suggestions
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
-              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
                 activeTab === "inventory"
                   ? "border-[#E31937] text-[#E31937]"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
+              <PackageIcon size={16} className="mr-1" />
               Inventory
             </button>
             <button
