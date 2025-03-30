@@ -459,7 +459,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                 <button
                   onClick={() => {
                     setSelectedRequest(request);
-                    setShowNewRequestModal(true);
                   }}
                   className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
                 >
