@@ -10,20 +10,52 @@ from backend.auth.models import Order, Product, Request, Suggestion, User
 
 fake = Faker()
 
+# Predefined realistic office texts
+OFFICE_SUPPLY_REQUESTS = [
+    "Order new printer paper",
+    "Restock office pens and pencils",
+    "Purchase notepads",
+    "Buy whiteboard markers",
+    "Replenish staplers and staples",
+    "Order adhesive tape rolls",
+    "Get envelopes for mailings",
+    "Restock printer ink",
+]
+
+MAINTENANCE_REQUESTS = [
+    "Repair broken office chair",
+    "Fix the air conditioning unit",
+    "Service the office printer",
+    "Replace flickering lights",
+    "Repair the conference room projector",
+    "Fix the door lock in reception",
+    "Service the copier machine",
+    "Repair noise from the air conditioner",
+]
+
+OFFICE_SUGGESTIONS = [
+    "Upgrade the coffee machine",
+    "Install standing desks in the office",
+    "Improve break room facilities",
+    "Introduce flexible work hours",
+    "Host monthly team-building events",
+    "Add more plants for a greener workspace",
+    "Implement a recycling program",
+    "Upgrade the office Wi-Fi network",
+]
+
 
 def insert_test_data(db: Session):
+    """
+    Insert product data from JSON files located in the 'data' directory.
+    """
     for file in os.listdir("data"):
         with open(os.path.join("data", file), "r") as f:
             print(f"Inserting data from {file}")
             try:
                 data = json.load(f)
-
-                for product in data["products"]:
-                    if (
-                        not db.query(Product)
-                        .filter(Product.id == product["id"])
-                        .first()
-                    ):
+                for product in data.get("products", []):
+                    if not db.query(Product).filter(Product.id == product["id"]).first():
                         db.add(
                             Product(
                                 id=product["id"],
@@ -35,7 +67,6 @@ def insert_test_data(db: Session):
                                 thumbnail=product["thumbnail"],
                             )
                         )
-
                 db.commit()
             except json.JSONDecodeError:
                 print(f"Error decoding JSON from {file}")
@@ -79,19 +110,18 @@ def create_test_users(db: Session) -> None:
     db.commit()
 
 
-def create_fake_data(db: Session, num_records: int = 10) -> None:
+def create_fake_data(db: Session, num_records: int = 50) -> None:
     """
-    Generate fake data for Order, Suggestion, and Request models.
+    Generate realistic fake data for Order, Suggestion, and Request models.
+    Generates a default of 50 records for each model.
 
     Args:
         db (Session): SQLAlchemy database session
         num_records (int): Number of records to generate for each model
     """
-    # First, get or create some users to associate with the records
+    # Get or create some users for associations.
     users = db.query(User).all()
-
     if not users:
-        # Create some fake users if none exist
         users = []
         for _ in range(3):
             user = User(
@@ -105,16 +135,17 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
             users.append(user)
         db.commit()
 
-    # Create fake orders
+    # Create fake orders if none exist
     orders = db.query(Order).all()
     if not orders:
+        orders = []
         for _ in range(num_records):
             order = Order(
                 user_id=choice(users).id,
                 status=choice(["pending", "processing", "completed", "cancelled"]),
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
-                cost=randint(0, 100),
+                cost=randint(50, 300),
             )
             order.updated_at = fake.date_time_between(start_date=order.created_at)
             if order.status == "completed":
@@ -123,42 +154,48 @@ def create_fake_data(db: Session, num_records: int = 10) -> None:
             orders.append(order)
         db.commit()
 
+    # Create fake suggestions using realistic office suggestion texts
     suggestions = db.query(Suggestion).all()
     if not suggestions:
         for _ in range(num_records):
             suggestion = Suggestion(
                 user_id=choice(users).id,
-                suggestion=fake.text(max_nb_chars=30),
+                suggestion=choice(OFFICE_SUGGESTIONS),
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
             )
-            suggestion.updated_at = fake.date_time_between(
-                start_date=suggestion.created_at
-            )
-            if randint(0, 1):  # 50% chance of being completed
-                suggestion.completed_at = fake.date_time_between(
-                    start_date=suggestion.updated_at
-                )
+            suggestion.updated_at = fake.date_time_between(start_date=suggestion.created_at)
+            # 50% chance of being marked completed
+            if randint(0, 1):
+                suggestion.completed_at = fake.date_time_between(start_date=suggestion.updated_at)
             db.add(suggestion)
         db.commit()
 
-    # Create fake requests
+    # Create fake requests using realistic office request texts
     requests = db.query(Request).all()
     if not requests:
+        product_list = db.query(Product).all()
         for _ in range(num_records):
-            product = choice(db.query(Product).all()).title
+            req_type = choice(["maintenance", "supply"])
+            if req_type == "supply":
+                request_text = choice(OFFICE_SUPPLY_REQUESTS)
+                # For supply requests, choose a product title from the available products
+                product = choice(product_list).title if product_list else "Office Supplies"
+                item_name = product
+            else:
+                request_text = choice(MAINTENANCE_REQUESTS)
+                item_name = ""  # Maintenance requests typically don't have an item name
 
             request = Request(
-                user_id=999,
-                request=fake.text(max_nb_chars=20),
+                user_id=999,  # using the employee id for test data
+                request=request_text,
                 order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name="employee",
-                request_type=choice(["maintenance", "supply"]),
+                request_type=req_type,
                 status=choice(["pending", "approved", "denied", "delivered"]),
-                item_name=product,
+                item_name=item_name,
             )
-
             request.updated_at = fake.date_time_between(start_date=request.created_at)
             db.add(request)
         db.commit()

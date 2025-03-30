@@ -126,7 +126,10 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
 
   const totalSpent = filteredRequests
     .filter(
-      (r) => r.status === Status.DELIVERED || r.status === Status.APPROVED
+      (r) =>
+        r.status === Status.DELIVERED ||
+        r.status === Status.APPROVED ||
+        r.status === Status.ORDERED
     )
     .reduce((sum, req) => sum + (req.cost || 0), 0);
 
