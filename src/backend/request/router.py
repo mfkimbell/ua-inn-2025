@@ -25,7 +25,6 @@ class RequestRequest(BaseModel):
     user_id: int | None = None
     user_name: str | None = None
     request: str | None = None
-    order_id: int | None = None
     created_at: datetime.datetime | None = None
     updated_at: datetime.datetime | None = None
     comments: str | None = None
