@@ -1,4 +1,5 @@
-![worksync_logo-1](https://github.com/user-attachments/assets/0794ac07-de95-4aa8-a7f2-488c3f57c53d)
+
+![worksync_logo](https://github.com/user-attachments/assets/b38586f5-7658-4020-9998-0c6eb48cfbae)
 
 ## Overview
 
@@ -12,4 +13,5 @@ inventory, and visualize spending data in a dashboard. End users can submit and 
 
 ## Architechture
 
-![worksync_arch](https://github.com/user-attachments/assets/8ae8e413-85f8-4487-af99-0b50463c727a)
+<img src="https://github.com/user-attachments/assets/8ae8e413-85f8-4487-af99-0b50463c727a" alt="worksync_arch" width="800" />
+
