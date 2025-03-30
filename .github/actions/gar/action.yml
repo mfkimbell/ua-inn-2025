@@ -35,6 +35,6 @@ runs:
 
     - name: Build and push
       run: |
-        docker build -f ${{ inputs.dockerfile }} -t us-central1-docker.pkg.dev/${{ inputs.project_id }}/burviews/${{ inputs.image }}:latest .
-        docker push us-central1-docker.pkg.dev/${{ inputs.project_id }}/burviews/${{ inputs.image }}:latest
+        docker build -f ${{ inputs.dockerfile }} -t us-central1-docker.pkg.dev/${{ inputs.project_id }}/worksync/${{ inputs.image }}:latest .
+        docker push us-central1-docker.pkg.dev/${{ inputs.project_id }}/worksync/${{ inputs.image }}:latest
       shell: bash
