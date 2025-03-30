@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y sqlite3
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+RUN pip install psycopg2-binary
+
 # Install pdm within the virtual environment
 RUN pip install pdm
 
