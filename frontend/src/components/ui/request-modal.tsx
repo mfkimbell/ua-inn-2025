@@ -64,99 +64,153 @@ const RequestModal: React.FC<RequestModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
         <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-medium text-gray-900">
+          <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
+            <h2 className="text-xl font-bold text-gray-900">
               {request ? "Edit Request" : "New Request"}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-500"
+              className="text-gray-400 hover:text-gray-500 rounded-full p-1 hover:bg-gray-100"
             >
               <X size={24} />
             </button>
           </div>
+
           <form onSubmit={handleSubmit}>
-            {/* Request Field */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Request
-              </label>
-              <input
-                type="text"
-                name="request"
-                value={formData.request}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                required
-              />
+            {/* Two-column grid for main fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Request
+                </label>
+                <input
+                  type="text"
+                  name="request"
+                  value={formData.request}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Request Type
+                </label>
+                <select
+                  name="requestType"
+                  value={formData.requestType}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value="supply">Supply Request</option>
+                  <option value="maintenance">Maintenance Request</option>
+                  <option value="suggestion">Suggestion</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Item Name
+                </label>
+                <select
+                  name="itemName"
+                  value={formData.itemName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                >
+                  <option value="">Select an item</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.title}>
+                      {product.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Requested Amount
+                </label>
+                <input
+                  type="number"
+                  name="requestedAmount"
+                  value={formData.requestedAmount}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ordered Amount
+                </label>
+                <input
+                  type="number"
+                  name="orderedAmount"
+                  value={formData.orderedAmount}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value={Status.PENDING}>{Status.PENDING}</option>
+                  <option value={Status.APPROVED}>{Status.APPROVED}</option>
+                  <option value={Status.DENIED}>{Status.DENIED}</option>
+                  <option value={Status.DELIVERED}>{Status.DELIVERED}</option>
+                  <option value={Status.ORDERED}>{Status.ORDERED}</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  User Name
+                </label>
+                <input
+                  type="text"
+                  name="userName"
+                  value={formData.userName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cost
+                </label>
+                <input
+                  type="number"
+                  name="cost"
+                  value={formData.cost}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Admin Name
+                </label>
+                <input
+                  type="text"
+                  name="adminName"
+                  value={formData.adminName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
             </div>
-            {/* Request Type */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Request Type
-              </label>
-              <select
-                name="requestType"
-                value={formData.requestType}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              >
-                <option value="supply">Supply Request</option>
-                <option value="maintenance">Maintenance Request</option>
-                <option value="suggestion">Suggestion</option>
-              </select>
-            </div>
-            {/* Item Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Item Name
-              </label>
-              <select
-                name="itemName"
-                value={formData.itemName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                required
-              >
-                <option value="">Select an item</option>
-                {products.map((product) => (
-                  <option key={product.id} value={product.title}>
-                    {product.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Requested Amount */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Requested Amount
-              </label>
-              <input
-                type="number"
-                name="requestedAmount"
-                value={formData.requestedAmount}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                required
-              />
-            </div>
-            {/* Ordered Amount */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ordered Amount
-              </label>
-              <input
-                type="number"
-                name="orderedAmount"
-                value={formData.orderedAmount}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            {/* Comments */}
-            <div className="mb-4">
+
+            {/* Comments Section (full width, placed two rows below the grid) */}
+            <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Comments
               </label>
@@ -165,54 +219,12 @@ const RequestModal: React.FC<RequestModalProps> = ({
                 value={formData.comments}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                rows={3}
+                rows={4}
               ></textarea>
             </div>
-            {/* Status */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              >
-                <option value={Status.PENDING}>{Status.PENDING}</option>
-                <option value={Status.APPROVED}>{Status.APPROVED}</option>
-                <option value={Status.DENIED}>{Status.DENIED}</option>
-                <option value={Status.DELIVERED}>{Status.DELIVERED}</option>
-                <option value={Status.ORDERED}>{Status.ORDERED}</option>
-              </select>
-            </div>
-            {/* User Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cost
-              </label>
-              <input
-                type="number"
-                name="cost"
-                value={formData.cost}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            {/* Admin Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Admin Name
-              </label>
-              <input
-                type="text"
-                name="adminName"
-                value={formData.adminName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="flex justify-end space-x-3">
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end space-x-3">
               <button
                 type="button"
                 onClick={onClose}
