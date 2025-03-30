@@ -6,8 +6,8 @@
 Built in 24 hours for UA Hackathon 2025. This project automatically provisions inventory and suggestion-tracking workflows on Google Cloud. It leverages Terraform and GitHub Actions to provision Cloud Run, store container images in Artifact Registry, and manage secrets via Secrets Manager. The application features a Next.js frontend (with React, Redux, and NextAuth-style sessions) and a FastAPI backend connected to CockroachDB via SQLAlchemy. The NextJS app is zipped and run in Google Cloud Functions, which Firebase points to. Administrators can manage requests, calculate costs, maintain inventory, and track spending/request data on a dashboard, while end users submit and monitor requests in real time.
 
 ## Demo
-
-https://drive.google.com/file/d/1GSbjWGnQeYZLSXnVpPSrn1_3c7VFLWOJ/view?usp=sharing
+[
+https://drive.google.com/file/d/1GSbjWGnQeYZLSXnVpPSrn1_3c7VFLWOJ/view?usp=sharing](https://discord.com/channels/1011733149178409021/1355570917849436391/1355921475210580080)
 
 ## Architechture
 
