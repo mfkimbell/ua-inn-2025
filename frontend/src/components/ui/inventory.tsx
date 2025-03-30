@@ -2,33 +2,29 @@ import { Plus, Package, Search } from "lucide-react";
 import { Product } from "@/types/product.types";
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import AddProductModal from "./add-item-modal";
+import { ProductsService } from "@/lib/products-service";
 
 interface InventoryProps {
   products: Product[];
-  onAddItem?: () => void;
-  onEditItem?: (product: Product) => void;
-  onDeleteItem?: (productId: number) => void;
 }
 
 const ITEMS_PER_PAGE = 6;
 
-const Inventory: React.FC<InventoryProps> = ({
-  products,
-  onAddItem,
-  onEditItem,
-  onDeleteItem,
-}) => {
+const Inventory: React.FC<InventoryProps> = ({ products }) => {
+  const [currentProducts, setCurrentProducts] = useState<Product[]>(products);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) =>
+    return currentProducts.filter((product) =>
       Object.values(product).some((value) =>
         String(value).toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-  }, [products, searchQuery]);
+  }, [currentProducts, searchQuery]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -41,6 +37,22 @@ const Inventory: React.FC<InventoryProps> = ({
     setCurrentPage(page);
   };
 
+  const onAddProduct = async (product: Product) => {
+    await ProductsService.createProduct(product);
+    setShowAddProductModal(false);
+    setEditingProduct(null);
+    setCurrentProducts([...currentProducts, product]);
+  };
+
+  const onUpdateProduct = async (product: Product) => {
+    await ProductsService.updateProduct(product);
+    setShowAddProductModal(false);
+    setEditingProduct(null);
+    setCurrentProducts(
+      currentProducts.map((p) => (p.id === product.id ? product : p))
+    );
+  };
+
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <div className="px-4 py-5 sm:p-6">
@@ -49,7 +61,7 @@ const Inventory: React.FC<InventoryProps> = ({
             Inventory Management
           </h2>
           <button
-            onClick={onAddItem}
+            onClick={() => setShowAddProductModal(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E31937] hover:bg-[#c01731]"
           >
             <Plus className="h-5 w-5 mr-2" />
@@ -130,22 +142,9 @@ const Inventory: React.FC<InventoryProps> = ({
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    {editingProduct && editingProduct.id === product.id ? (
-                      <input
-                        type="number"
-                        value={editingProduct.price}
-                        onChange={(e) =>
-                          setEditingProduct({
-                            ...editingProduct,
-                            price: parseFloat(e.target.value),
-                          })
-                        }
-                      />
-                    ) : (
-                      <div className="text-sm text-gray-900">
-                        ${product.price}
-                      </div>
-                    )}
+                    <div className="text-sm text-gray-900">
+                      ${product.price}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div
@@ -158,13 +157,27 @@ const Inventory: React.FC<InventoryProps> = ({
                   </td>
                   <td className="px-6 py-4 text-sm font-medium">
                     <button
-                      onClick={() => onEditItem?.(product)}
+                      onClick={() => {
+                        setEditingProduct(product);
+                        setShowAddProductModal(true);
+                      }}
                       className="text-[#E31937] hover:text-[#c01731] hover:bg-gray-100 rounded-md px-2 py-1 mr-3"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => onDeleteItem?.(product.id)}
+                      onClick={async () => {
+                        try {
+                          setEditingProduct(null);
+                          setShowAddProductModal(false);
+                          await ProductsService.deleteProduct(product.id);
+                          setCurrentProducts((prev) =>
+                            prev.filter((p) => p.id !== product.id)
+                          );
+                        } catch (error) {
+                          console.error("Error deleting product:", error);
+                        }
+                      }}
                       className="text-red-600 hover:text-red-900 hover:bg-gray-100 rounded-md px-2 py-1"
                     >
                       Delete
@@ -278,6 +291,16 @@ const Inventory: React.FC<InventoryProps> = ({
           </div>
         )}
       </div>
+      {showAddProductModal && (
+        <AddProductModal
+          onSave={editingProduct ? onUpdateProduct : onAddProduct}
+          onClose={() => {
+            setEditingProduct(null);
+            setShowAddProductModal(false);
+          }}
+          product={editingProduct}
+        />
+      )}
     </div>
   );
 };

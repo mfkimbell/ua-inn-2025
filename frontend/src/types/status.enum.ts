@@ -4,4 +4,5 @@ export enum Status {
   DENIED = "denied",
   DELIVERED = "delivered",
   ORDERED = "ordered",
+  COMPLETED = "completed"
 }

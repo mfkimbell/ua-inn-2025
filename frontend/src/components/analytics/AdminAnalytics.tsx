@@ -5,7 +5,7 @@ import {
   PieChart, 
   LineChart,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { Request, Suggestion } from "@/types";
 import { Status } from "@/types/status.enum";
@@ -21,7 +21,7 @@ type AdminAnalyticsProps = {
   suggestions: Suggestion[];
 };
 
-const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("month");
   const [lastUpdated, setLastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
   
@@ -42,12 +42,16 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
     }
   };
 
-  // Filter requests by date range
   const filteredRequests = requests.filter(request => 
     dayjs(request.createdAt).isAfter(getStartDate())
   );
 
-  // Calculate key metrics
+  const filteredSuggestions = suggestions.filter(suggestion => 
+    dayjs(suggestion.createdAt).isAfter(getStartDate())
+  );
+
+  const suggestionsAmount = filteredSuggestions.length;
+
   const totalRequests = filteredRequests.length;
   
   const pendingRequests = filteredRequests.filter(r => r.status === Status.PENDING).length;
@@ -61,19 +65,11 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
 
   const avgResponseTime = calculateAvgResponseTime(filteredRequests);
 
-  // For request types breakdown
   const supplyRequests = filteredRequests.filter(r => r.requestType === "supply").length;
   const maintenanceRequests = filteredRequests.filter(r => r.requestType === "maintenance").length;
   const otherRequests = totalRequests - supplyRequests - maintenanceRequests;
 
-  // Generate data for top requested items
   const topItems = getTopRequestedItems(filteredRequests);
-
-  // Handle refresh - in a real app this would trigger data refetch
-  const handleRefresh = () => {
-    setLastUpdated(dayjs().format("MMMM D, YYYY h:mm A"));
-    // You would typically call a function here to refresh data from API
-  };
 
   // Helper function to calculate average response time (in days)
   function calculateAvgResponseTime(reqs: Request[]): number {
@@ -115,6 +111,15 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
   .filter(r => r.status === Status.DELIVERED || r.status === Status.APPROVED)
   .reduce((sum, req) => sum + (req.cost || 0), 0);
 
+  const statusData = [
+    { status: 'pending', count: pendingRequests },
+    { status: 'approved', count: filteredRequests.filter(r => r.status === Status.APPROVED).length },
+    { status: 'denied', count: filteredRequests.filter(r => r.status === Status.DENIED).length },
+    { status: 'delivered', count: filteredRequests.filter(r => r.status === Status.DELIVERED).length },
+    { status: 'ordered', count: filteredRequests.filter(r => r.status === Status.ORDERED).length },
+    { status: 'completed', count: filteredRequests.filter(r => r.status === Status.COMPLETED).length }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header and filters */}
@@ -123,12 +128,12 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
           <h2 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
           <p className="text-sm text-gray-500">
             Last updated: {lastUpdated} 
-            <button 
+            {/* <button 
               onClick={handleRefresh}
               className="ml-2 text-[#E31937] hover:text-[#c01731] inline-flex items-center"
             >
               <RefreshCw size={14} className="mr-1" /> Refresh
-            </button>
+            </button> */}
           </p>
         </div>
         
@@ -170,7 +175,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
         completedRequests={completedRequests}
         completionRate={completionRate}
         avgResponseTime={avgResponseTime}
-        totalSuggestions={0}
+        totalSuggestions={suggestionsAmount}
         totalSpent={totalSpent}
       />
 
@@ -198,7 +203,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
               Request Status Distribution
             </h3>
           </div>
-          <RequestStatusPieChart requests={filteredRequests} />
+          <RequestStatusPieChart statusData={statusData} totalRequests={totalRequests}/>
         </div>
 
         {/* Request Types */}
