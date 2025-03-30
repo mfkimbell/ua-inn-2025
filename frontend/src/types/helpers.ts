@@ -32,6 +32,7 @@ export const parseClientSuggestion = (
     created_at: clientSuggestion.createdAt,
     updated_at: clientSuggestion.updatedAt,
     completed_at: clientSuggestion.completedAt,
+    comments: clientSuggestion.comments,
   };
 };
 
