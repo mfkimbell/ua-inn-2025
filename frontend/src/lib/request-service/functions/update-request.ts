@@ -3,10 +3,10 @@ import { parseClientRequest } from "@/types";
 import { ServerRequest } from "@/types/request.types";
 import { Request } from "@/types/request.types";
 
-export const updateRequest = async (request: Request) => {
+export const updateRequest = async (request: Request & { amount?: number }) => {
   const response = await fetch<ServerRequest>("/request", {
     method: "PUT",
-    data: parseClientRequest(request),
+    data: { ...parseClientRequest(request), amount: request.amount },
   });
 
   if (!response) {

@@ -55,6 +55,8 @@ export const parseClientRequest = (
   clientRequest: Request
 ): Partial<ServerRequest> => {
   return {
+    id: clientRequest.id,
+    status: clientRequest.status,
     user_id: clientRequest.userId,
     user_name: clientRequest.userName,
     request_type: clientRequest.requestType,

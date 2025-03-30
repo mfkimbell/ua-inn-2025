@@ -15,6 +15,18 @@ def read_from_db(db: Session, user: User, model: Any, sort: bool = False) -> Any
         )
     return db.query(model).filter(model.user_id == user.id).all()
 
+def pagination_from_db(db: Session, user: User, model: Any, sort: bool = False, page: int = 1, limit: int = 10) -> Any:
+    if sort:
+        return (
+            db.query(model)
+            .filter(model.user_id == user.id)
+            .order_by(model.created_at.desc())
+            .offset((page - 1) * limit)
+            .limit(limit)
+            .all()
+        )
+    return db.query(model).filter(model.user_id == user.id).offset((page - 1) * limit).limit(limit).all()
+
 
 def read_all_from_db(db: Session, model: Any, sort: bool = False) -> Any:
     if sort:

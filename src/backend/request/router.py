@@ -1,10 +1,11 @@
 import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from backend.auth.database import get_db
+from backend.auth.models import Product
 from backend.auth.models import Request as DatabaseRequest
 from backend.auth.models import User
 from backend.auth.user_manager import UserManager
@@ -65,9 +66,14 @@ async def create_request(
     return create_record(db, DatabaseRequest, request.model_dump())
 
 
+class UpdateRequestRequest(RequestRequest):
+    product_name: str | None = None
+    amount: int | None = None
+
+
 @router.put("/request")
 async def update_request(
-    request: RequestRequest,
+    request: UpdateRequestRequest,
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
@@ -77,6 +83,19 @@ async def update_request(
 
     if not db_request:
         raise HTTPException(status_code=404, detail="Request not found")
+
+    if request.status == "delivered" and request.item_name and request.amount:
+        product = db.query(Product).filter(Product.title == request.item_name).first()
+
+        if product:
+            product.stock += (  # pyright: ignore[reportAttributeAccessIsssue]
+                request.amount
+            )
+        else:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        db.commit()
+        db.refresh(product)
 
     return update_record(db, DatabaseRequest, request.model_dump())
 

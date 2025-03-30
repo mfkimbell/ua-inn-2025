@@ -9,6 +9,7 @@ from backend.database.database import (
     create_record,
     delete_record,
     read_all_from_db,
+    read_from_db,
     update_record,
 )
 
@@ -24,6 +25,14 @@ class ProductRequest(BaseModel):
     stock: int | None = None
     thumbnail: str | None = None
 
+
+@router.get("/product")
+async def get_product(
+    product_id: int,
+    _: User = Depends(UserManager.get_user_from_header),
+    db: Session = Depends(get_db),
+):
+    return read_from_db(db, Product, product_id)
 
 @router.get("/product/all")
 async def get_all_products(

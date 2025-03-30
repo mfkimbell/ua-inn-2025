@@ -80,12 +80,14 @@ const statusOptions = [
 ];
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
+  const initialProducts = products;
   const [activeTab, setActiveTab] = useState<
     "requests" | "suggestions" | "inventory" | "analytics"
   >("requests");
 
   const [requests, setRequests] = useState<Request[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [inventory, setInventory] = useState<Product[]>(initialProducts);
 
   // Filter states for Requests
   const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
@@ -152,7 +154,16 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   // Keep the update function for requests (database update)
   const handleUpdateRequest = async (request: Request) => {
     try {
-      const updatedRequest = await RequestService.updateRequest(request);
+      let data: Request & { amount?: number } = request;
+
+      if (request.status === "delivered") {
+        data = {
+          ...request,
+          amount: request.orderedAmount,
+        };
+      }
+
+      const updatedRequest = await RequestService.updateRequest(data);
       setRequests((prev) =>
         prev.map((item) =>
           item.id === request.id
@@ -173,6 +184,12 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   const handleAddInventoryItem = () => {
     // TODO: Implement add inventory item
     console.log("Add inventory item");
+  };
+
+  const handleEditInventoryItem = (product: Product) => {
+    setInventory((prev) =>
+      prev.map((item) => (item.id === product.id ? product : item))
+    );
   };
 
   return (
@@ -288,10 +305,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
         </div>
 
         {activeTab === "analytics" && (
-          <AdminAnalytics 
-            requests={requests} 
-            suggestions={suggestions}
-          />
+          <AdminAnalytics requests={requests} suggestions={suggestions} />
         )}
 
         {/* Filter Panel for Requests */}
@@ -318,7 +332,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   </button>
                 ))}
               </div>
-              {/* Calendar Icon Button for Date Range */}
+
               <div className="relative">
                 <button
                   onClick={() => setShowReqDateRange(!showReqDateRange)}
@@ -359,7 +373,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           </div>
         )}
 
-        {/* Filter Panel for Suggestions */}
         {activeTab === "suggestions" && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-4 items-center">
@@ -424,7 +437,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           </div>
         )}
 
-        {/* Requests List */}
         {activeTab === "requests" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRequests.map((req) => (
@@ -451,7 +463,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   {req.request}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
-                  Submitted by: {req.is_anonymous ? "anonymous" : req.userName}
+                  Submitted by: {req.isAnonymous ? "anonymous" : req.userName}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
                   Item: {req.itemName}
@@ -554,7 +566,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
           <Inventory
             products={products}
             onAddItem={handleAddInventoryItem}
-            onEditItem={() => {}}
+            onEditItem={handleEditInventoryItem}
             onDeleteItem={() => {}}
           />
         )}
