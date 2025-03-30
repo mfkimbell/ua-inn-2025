@@ -12,6 +12,7 @@ import {
   Wrench,
   ClipboardList,
   Calendar,
+  Package,
 } from "lucide-react";
 import { RequestService } from "@/lib/request-service";
 import { SuggestionsService } from "@/lib/suggestions-service";
@@ -23,6 +24,8 @@ import RequestDetailsModal from "@/components/ui/details-modal";
 import RequestModal from "../ui/request-modal";
 import SuggestionModal from "../ui/suggestion-modal";
 import SuggestionDetailsModal from "../ui/suggestion-details-modal";
+import Inventory from "../ui/inventory";
+import useUser from "@/hooks/useUser";
 import { Product } from "@/types/product.types";
 
 export type PageProps = {
@@ -58,9 +61,12 @@ const getTypeIcon = (type: string) => {
 };
 
 const EmployeeView: React.FC<PageProps> = ({ products }) => {
-  const [activeTab, setActiveTab] = useState<"my-requests" | "my-suggestions">(
-    "my-requests"
-  );
+  const { user } = useUser();
+  // Extend activeTab union to include "inventory"
+  const [activeTab, setActiveTab] = useState<
+    "my-requests" | "my-suggestions" | "inventory"
+  >("my-requests");
+
   const [myRequests, setMyRequests] = useState<Request[]>([]);
   const [mySuggestions, setMySuggestions] = useState<Suggestion[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
@@ -83,17 +89,18 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
   const [suggFilterEndDate, setSuggFilterEndDate] = useState<string>("");
   const [showSuggDateRange, setShowSuggDateRange] = useState<boolean>(false);
 
+  // Inventory state
+  const [inventory, setInventory] = useState<Product[]>(products);
+
   useEffect(() => {
     const fetchRequests = async () => {
       const requests = await RequestService.getRequests();
       setMyRequests(requests);
     };
-
     const fetchSuggestions = async () => {
       const suggestions = await SuggestionsService.getAllSuggestions();
       setMySuggestions(suggestions);
     };
-
     fetchRequests();
     fetchSuggestions();
   }, []);
@@ -151,6 +158,18 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
     );
   };
 
+  // Inventory handlers (example logic)
+  const handleAddInventoryItem = () => {
+    // Implement your logic to add an inventory item
+    console.log("Add inventory item");
+  };
+
+  const handleEditInventoryItem = (product: Product) => {
+    setInventory((prev) =>
+      prev.map((item) => (item.id === product.id ? product : item))
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
@@ -195,7 +214,11 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
 
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Request Dashboard
+            {activeTab === "my-requests"
+              ? "Request Dashboard"
+              : activeTab === "my-suggestions"
+              ? "Suggestion Dashboard"
+              : "Inventory"}
           </h1>
           {activeTab === "my-requests" && (
             <button
@@ -212,7 +235,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
           {activeTab === "my-suggestions" && (
             <button
               onClick={() => {
-                // Clear any previously selected suggestion so that a new one is created
                 setSelectedSuggestion(null);
                 setShowNewSuggestionModal(true);
               }}
@@ -248,6 +270,17 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
               <FileText size={16} className="mr-1" />
               My Suggestions
             </button>
+            <button
+              onClick={() => setActiveTab("inventory")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+                activeTab === "inventory"
+                  ? "border-[#E31937] text-[#E31937]"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <Package size={16} className="mr-1" />
+              Inventory
+            </button>
           </nav>
         </div>
 
@@ -255,7 +288,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
         {activeTab === "my-requests" && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-4 items-center">
-              {/* Status Filter Buttons */}
               <div className="flex items-center gap-2">
                 {["all", "pending", "approved", "completed", "denied"].map(
                   (status) => (
@@ -277,7 +309,6 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                   )
                 )}
               </div>
-              {/* Date Range Filter */}
               <div className="relative">
                 <button
                   onClick={() => setShowReqDateRange(!showReqDateRange)}
@@ -409,7 +440,10 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {request.request}
                 </h3>
-
+                <p className="text-sm text-gray-700 mb-2">
+                  Submitted by:{" "}
+                  {request.is_anonymous ? "anonymous" : request.userName}
+                </p>
                 <div className="mt-4 text-xs text-gray-500">
                   <div className="flex justify-between">
                     <span>
@@ -469,7 +503,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                 <button
                   onClick={() => {
                     setSelectedSuggestion(suggestion);
-                    // When viewing details, we open the read-only details modal:
+                    // When viewing details, open the read-only details modal:
                     setShowNewSuggestionModal(false);
                   }}
                   className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
@@ -479,6 +513,27 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
               </div>
             ))}
           </div>
+        )}
+
+        {activeTab === "inventory" && (
+          <Inventory
+            products={products}
+            onAddItem={() => {
+              // You can implement your inventory add logic here
+              console.log("Add inventory item");
+            }}
+            onEditItem={(product) => {
+              // Inventory edit logic
+              setInventory((prev) =>
+                prev.map((item) => (item.id === product.id ? product : item))
+              );
+            }}
+            onDeleteItem={(productId) => {
+              setInventory((prev) =>
+                prev.filter((item) => item.id !== productId)
+              );
+            }}
+          />
         )}
       </main>
 
@@ -490,7 +545,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
           onClose={() => setShowNewRequestModal(false)}
           onSave={(updatedRequest) => {
             if (selectedRequest) {
-              // For update logic, implement as needed.
+              // For update logic, implement as needed
             } else {
               handleNewRequest(updatedRequest);
             }
@@ -517,7 +572,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
             if (selectedSuggestion) {
               handleSuggestionUpdate(updatedSuggestion);
             } else {
-              // IMPORTANT: Ensure a new suggestion doesn't pass an empty string for completedAt.
+              // Ensure new suggestion doesn't pass an empty completedAt
               let data = { ...updatedSuggestion };
               if (!data.completedAt || data.completedAt.trim() === "") {
                 data.completedAt = undefined;
@@ -531,13 +586,11 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
         />
       )}
 
-      {/** Read-only Details Modal for Suggestions */}
+      {/* Read-only Details Modal for Suggestions */}
       {selectedSuggestion && (
         <SuggestionDetailsModal
           suggestion={selectedSuggestion}
-          onClose={() => {
-            setSelectedSuggestion(null);
-          }}
+          onClose={() => setSelectedSuggestion(null)}
         />
       )}
     </div>

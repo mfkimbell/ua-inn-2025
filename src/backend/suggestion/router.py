@@ -27,6 +27,7 @@ class SuggestionRequest(BaseModel):
     updated_at: datetime.datetime | None = None
     completed_at: datetime.datetime | None = None
     comments: str | None = None
+    is_anonymous: bool | None = None
 
 
 @router.get("/suggestion")
@@ -34,7 +35,7 @@ async def get_suggestion(
     user: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    return read_from_db(db, user, Suggestion)
+    return read_from_db(db, user, Suggestion, sort=True)
 
 
 @router.get("/suggestion/all")
