@@ -363,7 +363,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
                         ? "bg-gray-200 text-gray-800"
                         : status === "pending"
                         ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
+                        : "bg-blue-100 text-blue-800"
                     } ${
                       suggFilterStatus === status
                         ? "ring-2 ring-offset-2 ring-[#E31937]"
