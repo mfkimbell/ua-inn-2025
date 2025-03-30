@@ -166,7 +166,7 @@ const EmployeeView: React.FC<PageProps> = ({ products }) => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <img
-            src="/worksync_logo.png"
+            src="https://storage.googleapis.com/worksync-image-bucket/worksync_logo.png"
             alt="WorkSync Logo"
             className="w-25 h-9"
           />

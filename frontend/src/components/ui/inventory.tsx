@@ -120,13 +120,12 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-8 w-8 relative mr-3">
-                        <Image
+                        <img
                           src={product.thumbnail}
                           alt={product.title}
                           width={30}
                           height={30}
-                          className="object-cover rounded-sm"
-                          style={{ width: "100%", height: "100%" }}
+                          className="object-cover rounded-sm h-[30px] w-[30px]"
                         />
                       </div>
                       <div className="min-w-0 flex-1">

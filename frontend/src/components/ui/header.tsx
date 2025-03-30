@@ -24,7 +24,7 @@ const Header = () => {
         <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <img
-              src="/worksync_logo.png"
+              src="https://storage.googleapis.com/worksync-image-bucket/worksync_logo.png"
               alt="WorkSync Logo"
               className="w-25 h-9"
             />
