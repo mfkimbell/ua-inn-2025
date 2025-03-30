@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Head from "next/head";
-import { toast } from "react-toastify";
 import {
   Bell,
   UserCircle,
@@ -23,7 +22,6 @@ import AuthButton from "../auth/button";
 import Inventory from "../ui/inventory";
 import AdminAnalytics from "@/components/analytics/AdminAnalytics";
 import { Product } from "@/types/product.types";
-import { Status } from "@/types/status.enum";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import { Suggestion } from "@/types/suggestion.types";
@@ -33,7 +31,6 @@ export type PageProps = {
   products: Product[];
 };
 
-// Helper to display request type icons
 const getTypeIcon = (type: string) => {
   switch (type) {
     case "supply":
@@ -66,11 +63,9 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// For suggestions, derive status from completedAt (if empty, "pending"; otherwise, "completed")
 const getSuggestionStatus = (sugg: Suggestion) =>
   sugg.completedAt ? "completed" : "pending";
 
-// Define status options for filtering (including "all")
 const statusOptions = [
   "all",
   "pending",
@@ -91,19 +86,16 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [inventory, setInventory] = useState<Product[]>(initialProducts);
 
-  // Filter states for Requests
   const [reqFilterStatus, setReqFilterStatus] = useState<string>("all");
   const [reqFilterStartDate, setReqFilterStartDate] = useState<string>("");
   const [reqFilterEndDate, setReqFilterEndDate] = useState<string>("");
   const [showReqDateRange, setShowReqDateRange] = useState<boolean>(false);
 
-  // Filter states for Suggestions
   const [suggFilterStatus, setSuggFilterStatus] = useState<string>("all");
   const [suggFilterStartDate, setSuggFilterStartDate] = useState<string>("");
   const [suggFilterEndDate, setSuggFilterEndDate] = useState<string>("");
   const [showSuggDateRange, setShowSuggDateRange] = useState<boolean>(false);
 
-  // Fetch requests from the database on mount
   useEffect(() => {
     const fetchRequests = async () => {
       const dbRequests = await RequestService.getAllRequests();
@@ -112,7 +104,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     fetchRequests();
   }, []);
 
-  // Filter requests based on status and created date range
   const filteredRequests = requests.filter((req) => {
     const statusMatch =
       reqFilterStatus === "all" || req.status.toLowerCase() === reqFilterStatus;
@@ -122,7 +113,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     return statusMatch && dateMatch;
   });
 
-  // Filter suggestions based on derived status and created date range
   const filteredSuggestions = suggestions.filter((sugg) => {
     const derivedStatus = getSuggestionStatus(sugg);
     const statusMatch =
@@ -153,7 +143,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
     }
   };
 
-  // Keep the update function for requests (database update)
   const handleUpdateRequest = async (request: Request) => {
     try {
       let data: Request & { amount?: number } = request;
