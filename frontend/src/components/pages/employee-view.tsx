@@ -1,3 +1,4 @@
+// EmployeeView.tsx
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import dayjs from "dayjs";
@@ -10,13 +11,17 @@ import {
   ChevronDown,
   X,
   Wrench,
+  ClipboardList,
 } from "lucide-react";
 import { RequestService } from "@/lib/request-service";
+import { SuggestionsService } from "@/lib/suggestions-service";
 import { Request } from "@/types/request.types";
+import { Suggestion } from "@/types/suggestion.types";
+import { parseServerRequest, parseServerSuggestion } from "@/types";
 import AuthButton from "../auth/button";
 import RequestDetailsModal from "@/components/ui/details-modal";
 import RequestModal from "../ui/request-modal";
-import { parseServerRequest } from "@/types";
+import SuggestionModal from "../ui/suggestion-modal";
 import { Product } from "@/types/product.types";
 
 export type PageProps = {
@@ -24,22 +29,35 @@ export type PageProps = {
 };
 
 export default function EmployeeView({ products }: PageProps) {
-  const [activeTab, setActiveTab] = useState("my-requests");
+  const [activeTab, setActiveTab] = useState<"my-requests" | "my-suggestions">(
+    "my-requests"
+  );
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
-  const [requestType, setRequestType] = useState("supply");
-  const [requestTitle, setRequestTitle] = useState("");
-  const [requestDetails, setRequestDetails] = useState("");
+  const [showNewSuggestionModal, setShowNewSuggestionModal] = useState(false);
   const [myRequests, setMyRequests] = useState<Request[]>([]);
+  const [mySuggestions, setMySuggestions] = useState<Suggestion[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+  const [selectedSuggestion, setSelectedSuggestion] =
+    useState<Suggestion | null>(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
       const requests = await RequestService.getRequests();
       setMyRequests(requests);
     };
+
+    const fetchSuggestions = async () => {
+      // If you have a service method to fetch employee suggestions, use it.
+      // Otherwise, this could be replaced by a call to SuggestionsService.getAllSuggestions()
+      const suggestions = await SuggestionsService.getAllSuggestions();
+      setMySuggestions(suggestions);
+    };
+
     fetchRequests();
+    fetchSuggestions();
   }, []);
 
+  // Helpers to render icons and colors
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -74,6 +92,29 @@ export default function EmployeeView({ products }: PageProps) {
     setShowNewRequestModal(false);
   };
 
+  const handleNewSuggestion = async (suggestion: Suggestion) => {
+    const newSuggestion = await SuggestionsService.createSuggestion(suggestion);
+    setMySuggestions((prev) => [
+      parseServerSuggestion([newSuggestion])[0],
+      ...prev,
+    ]);
+    setShowNewSuggestionModal(false);
+  };
+
+  const handleSuggestionUpdate = async (suggestion: Suggestion) => {
+    const updatedSuggestion = await SuggestionsService.updateSuggestion(
+      suggestion
+    );
+
+    setMySuggestions((prev) =>
+      prev.map((item) =>
+        item.id === suggestion.id
+          ? parseServerSuggestion([updatedSuggestion])[0]
+          : item
+      )
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
@@ -85,6 +126,7 @@ export default function EmployeeView({ products }: PageProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <img
@@ -108,23 +150,34 @@ export default function EmployeeView({ products }: PageProps) {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-600 mb-6">
           <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
           Employee Request Center
         </div>
-
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
             Request Dashboard
           </h1>
-          <button
-            onClick={() => setShowNewRequestModal(true)}
-            className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
-          >
-            <Plus size={20} className="mr-2" />
-            New Request
-          </button>
+          {activeTab === "my-requests" && (
+            <button
+              onClick={() => setShowNewRequestModal(true)}
+              className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
+            >
+              <Plus size={20} className="mr-2" />
+              New Request
+            </button>
+          )}
+          {activeTab === "my-suggestions" && (
+            <button
+              onClick={() => setShowNewSuggestionModal(true)}
+              className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
+            >
+              <Plus size={20} className="mr-2" />
+              New Suggestion
+            </button>
+          )}
         </div>
 
         <div className="border-b border-gray-200 mb-6">
@@ -137,57 +190,117 @@ export default function EmployeeView({ products }: PageProps) {
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
-              <FileText size={16} className="mr-1" />
+              <ClipboardList size={16} className="mr-1" />
               My Requests
+            </button>
+            <button
+              onClick={() => setActiveTab("my-suggestions")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+                activeTab === "my-suggestions"
+                  ? "border-[#E31937] text-[#E31937]"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <FileText size={16} className="mr-1" />
+              My Suggestions
             </button>
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {myRequests.map((request) => (
-            <div
-              key={request.id}
-              className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center">
-                  {getTypeIcon(request.requestType)}
-                  <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
-                    {request.requestType}
-                  </span>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                    request.status
-                  )}`}
-                >
-                  {request.status}
-                </span>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {request.request}
-              </h3>
-              <div className="mt-4 text-xs text-gray-500">
-                <div className="flex justify-between">
-                  <span>
-                    Created:{" "}
-                    {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm:A")}
-                  </span>
-                  <span>
-                    Updated:{" "}
-                    {dayjs(request.updatedAt).format("MMM DD, YYYY hh:mm:A")}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedRequest(request)}
-                className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+        {activeTab === "my-requests" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {myRequests.map((request) => (
+              <div
+                key={request.id}
+                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
               >
-                View Details
-              </button>
-            </div>
-          ))}
-        </div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center">
+                    {getTypeIcon(request.requestType)}
+                    <span className="ml-2 text-xs uppercase text-gray-500 font-medium">
+                      {request.requestType}
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                      request.status
+                    )}`}
+                  >
+                    {request.status}
+                  </span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {request.request}
+                </h3>
+                <p className="text-sm text-gray-700 mb-2">
+                  Submitted by:{" "}
+                  {request.is_anonymous ? "anonymous" : request.userName}
+                </p>
+                <div className="mt-4 text-xs text-gray-500">
+                  <div className="flex justify-between">
+                    <span>
+                      Created:{" "}
+                      {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm A")}
+                    </span>
+                    <span>
+                      Updated:{" "}
+                      {dayjs(request.updatedAt).format("MMM DD, YYYY hh:mm A")}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedRequest(request)}
+                  className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === "my-suggestions" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mySuggestions.map((suggestion) => (
+              <div
+                key={suggestion.id}
+                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-end items-start mb-4">
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {suggestion.completedAt ? "completed" : "pending"}
+                  </span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {suggestion.suggestion}
+                </h3>
+                <p className="text-sm text-gray-700 mb-2">
+                  Submitted by:{" "}
+                  {suggestion.isAnonymous ? "anonymous" : suggestion.userName}
+                </p>
+                <div className="mt-4 text-xs text-gray-500">
+                  <div>
+                    Created:{" "}
+                    {dayjs(suggestion.createdAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
+                  <div>
+                    Updated:{" "}
+                    {dayjs(suggestion.updatedAt).format("MMM DD, YYYY hh:mm A")}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedSuggestion(suggestion);
+                    setShowNewSuggestionModal(true);
+                  }}
+                  className="mt-4 w-full text-[#E31937] hover:text-[#c01731] text-sm font-medium py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
 
       {showNewRequestModal && (
@@ -195,7 +308,16 @@ export default function EmployeeView({ products }: PageProps) {
           request={selectedRequest}
           products={products}
           onClose={() => setShowNewRequestModal(false)}
-          onSave={handleNewRequest}
+          onSave={(updatedRequest) => {
+            if (selectedRequest) {
+              // For updates
+              // (Assuming your RequestService.updateRequest works as expected)
+              // You could call a handler similar to admin view
+            } else {
+              handleNewRequest(updatedRequest);
+            }
+            setShowNewRequestModal(false);
+          }}
         />
       )}
 
@@ -203,6 +325,25 @@ export default function EmployeeView({ products }: PageProps) {
         <RequestDetailsModal
           request={selectedRequest}
           onClose={() => setSelectedRequest(null)}
+        />
+      )}
+
+      {showNewSuggestionModal && (
+        <SuggestionModal
+          suggestion={selectedSuggestion}
+          onClose={() => {
+            setShowNewSuggestionModal(false);
+            setSelectedSuggestion(null);
+          }}
+          onSave={(updatedSuggestion) => {
+            if (selectedSuggestion) {
+              handleSuggestionUpdate(updatedSuggestion);
+            } else {
+              handleNewSuggestion(updatedSuggestion);
+            }
+            setShowNewSuggestionModal(false);
+            setSelectedSuggestion(null);
+          }}
         />
       )}
     </div>
