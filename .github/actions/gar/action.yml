@@ -1,0 +1,40 @@
+name: Build and Push Docker Image to GAR
+
+description: Build and push a Docker image to Google Artifact Registry
+
+inputs:
+  project_id:
+    description: "GCP Project ID"
+    required: true
+  gcp_sa_key:
+    description: "GCP Service Account Key"
+    required: true
+  image:
+    description: "Container Image"
+    required: true
+  dockerfile:
+    description: "Dockerfile"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: ${{ inputs.project_id }}
+        credentials_json: ${{ inputs.gcp_sa_key }}
+
+    - name: Configure Docker
+      run: |
+        gcloud auth configure-docker us-central1-docker.pkg.dev
+      shell: bash
+
+    - name: Build and push
+      run: |
+        docker build -f ${{ inputs.dockerfile }} -t us-central1-docker.pkg.dev/${{ inputs.project_id }}/burviews/${{ inputs.image }}:latest .
+        docker push us-central1-docker.pkg.dev/${{ inputs.project_id }}/burviews/${{ inputs.image }}:latest
+      shell: bash

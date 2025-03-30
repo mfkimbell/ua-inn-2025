@@ -1,0 +1,67 @@
+name: Terraform
+
+description: Build and push a Docker image to Google Artifact Registry
+
+inputs:
+  project_id:
+    description: "GCP Project ID"
+    required: true
+
+  region:
+    description: "GCP Region"
+    required: true
+
+  gcp_sa_key:
+    description: "GCP Service Account Key"
+    required: true
+
+  worksync_api_version:
+    description: "Worksync API version"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Cache npm
+      uses: actions/cache@v3
+      with:
+        path: frontend/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+
+    - name: Npm install
+      run: |
+        cd frontend
+        npm install
+      shell: bash
+
+    - name: Cache Terraform
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/terraform
+        key: ${{ runner.os }}-terraform
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: ${{ inputs.project_id }}
+        credentials_json: ${{ inputs.gcp_sa_key }}
+
+    - name: Set Terraform Variables
+      run: |
+        echo "TF_VAR_project_id=${{ inputs.project_id }}" >> $GITHUB_ENV
+        echo "TF_VAR_region=${{ inputs.region }}" >> $GITHUB_ENV
+        echo "TF_VAR_worksync_api_version=${{ inputs.worksync_api_version }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Run shell script
+      run: |
+        ./cloud-functions.sh
+      shell: bash

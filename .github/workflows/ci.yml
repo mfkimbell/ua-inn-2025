@@ -22,10 +22,19 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
-      - name: Build and push Docker image
-        uses: ./.github/actions/docker-image
+      - name: Build and push Docker image for backend
+        uses: ./.github/actions/gar
         with:
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_repo: test
-          dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+          gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          image: worksync-api
           dockerfile: Dockerfile.backend
+          worksync_api_version: ${{ steps.set_version.outputs.version }}
+
+      # - name: Run Terraform
+      #   uses: ./.github/actions/terraform
+      #   with:
+      #     gcp_sa_key: ${{ secrets.TERRAFORM_SA_KEY }}
+      #     project_id: ${{ secrets.GCP_PROJECT_ID }}
+      #     region: us-central1
+      #     worksync_api_version: ${{ steps.set_version.outputs.version }}
