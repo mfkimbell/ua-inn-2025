@@ -3,6 +3,7 @@ from typing import final
 
 from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from backend.auth.database import Base, engine
 
@@ -25,7 +26,6 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     credits = Column(Integer, default=1)
-    api_key_id = Column(Integer, ForeignKey("api_key.id"))
     role = Column(String, default="employee")
 
 
@@ -53,7 +53,7 @@ class Order(Base):
     __tablename__ = "order"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    user_name = Column(String, ForeignKey("user.first_name"))
+    user_name = Column(String)  # Regular column, not foreign key
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
@@ -61,13 +61,15 @@ class Order(Base):
     comments = Column(String)
     cost = Column(Float)
 
+    user = relationship("User", backref="orders")  # Relationship to User
+
 
 @final
 class Suggestion(Base):
     __tablename__ = "suggestion"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    user_name = Column(String, ForeignKey("user.first_name"))
+    user_name = Column(String)  # Regular column, not foreign key
     suggestion = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
@@ -75,13 +77,14 @@ class Suggestion(Base):
     comments = Column(String)
     is_anonymous = Column(Boolean, default=False)
 
+    user = relationship("User", backref="suggestions")  # Relationship to User
+
 
 @final
 class Request(Base):
     __tablename__ = "request"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    user_name = Column(String, ForeignKey("user.first_name"))
     request = Column(String)
     request_type = Column(String, default="supply")  # maintenance | supply
     status = Column(String, default="pending")
@@ -91,12 +94,18 @@ class Request(Base):
     comments = Column(String)
     is_anonymous = Column(Boolean, default=False)
     admin = Column(Integer, ForeignKey("user.id"))
-    admin_name = Column(String, ForeignKey("user.first_name"))
     cost = Column(Float)
     requested_amount = Column(Integer)
     ordered_amount = Column(Integer)
     item_name = Column(String)
     completed_at = Column(DateTime)
+    user_name = Column(String)
+
+    # Specify the foreign key for user_id relationship
+    user = relationship("User", backref="requests", foreign_keys=[user_id])
+
+    # Specify the foreign key for admin relationship
+    admin_user = relationship("User", backref="admin_requests", foreign_keys=[admin])
 
 
 @final
