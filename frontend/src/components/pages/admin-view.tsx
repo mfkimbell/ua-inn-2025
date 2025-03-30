@@ -22,6 +22,7 @@ import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import { Suggestion } from "@/types/suggestion.types";
 import { parseServerRequest } from "@/types";
+import Inventory from "../ui/inventory";
 
 export type PageProps = {
   products: Product[];
@@ -76,9 +77,9 @@ const statusOptions = [
 ];
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
-  const [activeTab, setActiveTab] = useState<"requests" | "suggestions">(
-    "requests"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "requests" | "suggestions" | "inventory"
+  >("requests");
 
   const [requests, setRequests] = useState<Request[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -159,6 +160,11 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   const handleNewRequest = async (request: Request) => {
     const newRequest = await RequestService.createRequest(request);
     setRequests((prev) => [parseServerRequest([newRequest])[0], ...prev]);
+  };
+
+  const handleAddInventoryItem = () => {
+    // TODO: Implement add inventory item
+    console.log("Add inventory item");
   };
 
   return (
@@ -249,6 +255,16 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
               }`}
             >
               Suggestions
+            </button>
+            <button
+              onClick={() => setActiveTab("inventory")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "inventory"
+                  ? "border-[#E31937] text-[#E31937]"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Inventory
             </button>
           </nav>
         </div>
@@ -507,6 +523,15 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
               </div>
             ))}
           </div>
+        )}
+
+        {activeTab === "inventory" && (
+          <Inventory
+            products={products}
+            onAddItem={handleAddInventoryItem}
+            onEditItem={() => {}}
+            onDeleteItem={() => {}}
+          />
         )}
       </main>
 

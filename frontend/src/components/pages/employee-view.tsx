@@ -84,7 +84,7 @@ export default function EmployeeView() {
 
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <img
+          <img
             src="/worksync_logo.png"
             alt="WorkSync Logo"
             className="w-25 h-9"
@@ -167,11 +167,11 @@ export default function EmployeeView() {
                 <div className="flex justify-between">
                   <span>
                     Created:{" "}
-                    {dayjs(request.createdAt).format("DD/MM/YYYY hh:mm:ss")}
+                    {dayjs(request.createdAt).format("MMM DD, YYYY hh:mm:A")}
                   </span>
                   <span>
                     Updated:{" "}
-                    {dayjs(request.updatedAt).format("DD/MM/YYYY hh:mm:ss")}
+                    {dayjs(request.updatedAt).format("MMM DD, YYYY hh:mm:A")}
                   </span>
                 </div>
               </div>
