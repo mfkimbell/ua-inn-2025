@@ -71,11 +71,6 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
 
   const topItems = getTopRequestedItems(filteredRequests);
 
-  const handleRefresh = () => {
-    setLastUpdated(dayjs().format("MMMM D, YYYY h:mm A"));
-    // You would typically call a function here to refresh data from API
-  };
-
   // Helper function to calculate average response time (in days)
   function calculateAvgResponseTime(reqs: Request[]): number {
     const requestsWithResponse = reqs.filter(r => 
