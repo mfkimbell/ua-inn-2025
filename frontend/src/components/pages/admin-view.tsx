@@ -507,7 +507,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                 </p>
                 {req.cost > 0 && (
                   <p className="text-sm text-gray-700 mb-2">
-                    Cost: ${req.cost}
+                    Cost: ${req.cost.toFixed(2)}
                   </p>
                 )}
                 {req.adminName && (

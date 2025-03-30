@@ -1,8 +1,8 @@
 // components/analytics/AdminAnalytics.tsx
 import { useState } from "react";
-import { 
-  BarChart, 
-  PieChart, 
+import {
+  BarChart,
+  PieChart,
   LineChart,
   TrendingUp,
   RefreshCw,
@@ -21,10 +21,17 @@ type AdminAnalyticsProps = {
   suggestions: Suggestion[];
 };
 
-const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }) => {
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("month");
-  const [lastUpdated, setLastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
-  
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
+  requests,
+  suggestions,
+}) => {
+  const [timeRange, setTimeRange] = useState<
+    "week" | "month" | "quarter" | "year"
+  >("month");
+  const [lastUpdated, setLastUpdated] = useState<string>(
+    dayjs().format("MMMM D, YYYY h:mm A")
+  );
+
   // Get start date based on selected time range
   const getStartDate = () => {
     const now = dayjs();
@@ -42,82 +49,112 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
     }
   };
 
-  const filteredRequests = requests.filter(request => 
+  const filteredRequests = requests.filter((request) =>
     dayjs(request.createdAt).isAfter(getStartDate())
   );
 
-  const filteredSuggestions = suggestions.filter(suggestion => 
+  const filteredSuggestions = suggestions.filter((suggestion) =>
     dayjs(suggestion.createdAt).isAfter(getStartDate())
   );
 
   const suggestionsAmount = filteredSuggestions.length;
 
   const totalRequests = filteredRequests.length;
-  
-  const pendingRequests = filteredRequests.filter(r => r.status === Status.PENDING).length;
-  const completedRequests = filteredRequests.filter(r => 
-    r.status === Status.DELIVERED || r.status === Status.APPROVED
+
+  const pendingRequests = filteredRequests.filter(
+    (r) => r.status === Status.PENDING
   ).length;
-  
-  const completionRate = totalRequests > 0 
-    ? Math.round((completedRequests / totalRequests) * 100) 
-    : 0;
+  const completedRequests = filteredRequests.filter(
+    (r) => r.status === Status.DELIVERED || r.status === Status.APPROVED
+  ).length;
+
+  const completionRate =
+    totalRequests > 0
+      ? Math.round((completedRequests / totalRequests) * 100)
+      : 0;
 
   const avgResponseTime = calculateAvgResponseTime(filteredRequests);
 
-  const supplyRequests = filteredRequests.filter(r => r.requestType === "supply").length;
-  const maintenanceRequests = filteredRequests.filter(r => r.requestType === "maintenance").length;
+  const supplyRequests = filteredRequests.filter(
+    (r) => r.requestType === "supply"
+  ).length;
+  const maintenanceRequests = filteredRequests.filter(
+    (r) => r.requestType === "maintenance"
+  ).length;
   const otherRequests = totalRequests - supplyRequests - maintenanceRequests;
 
   const topItems = getTopRequestedItems(filteredRequests);
 
   // Helper function to calculate average response time (in days)
   function calculateAvgResponseTime(reqs: Request[]): number {
-    const requestsWithResponse = reqs.filter(r => 
-      r.status !== Status.PENDING && r.createdAt && r.updatedAt
+    const requestsWithResponse = reqs.filter(
+      (r) => r.status !== Status.PENDING && r.createdAt && r.updatedAt
     );
-    
+
     if (requestsWithResponse.length === 0) return 0;
-    
+
     const totalDays = requestsWithResponse.reduce((sum, req) => {
       const created = dayjs(req.createdAt);
       const updated = dayjs(req.updatedAt);
-      return sum + updated.diff(created, 'day');
+      return sum + updated.diff(created, "day");
     }, 0);
-    
+
     return Math.round((totalDays / requestsWithResponse.length) * 10) / 10;
   }
 
   // Helper function to get top requested items
   function getTopRequestedItems(reqs: Request[]) {
-    const supplyRequests = reqs.filter(r => r.requestType === "supply");
+    const supplyRequests = reqs.filter((r) => r.requestType === "supply");
     const itemCounts: Record<string, number> = {};
-    
+
     // Count occurrences of each item
-    supplyRequests.forEach(req => {
+    supplyRequests.forEach((req) => {
       const itemName = req.itemName || "Unknown";
       itemCounts[itemName] = (itemCounts[itemName] || 0) + 1;
     });
-    
+
     // Convert to array and sort
-    const itemsArray = Object.entries(itemCounts).map(([name, count]) => ({ name, count }));
+    const itemsArray = Object.entries(itemCounts).map(([name, count]) => ({
+      name,
+      count,
+    }));
     itemsArray.sort((a, b) => b.count - a.count);
-    
+
     // Return top 5 items
     return itemsArray.slice(0, 5);
   }
 
   const totalSpent = filteredRequests
-  .filter(r => r.status === Status.DELIVERED || r.status === Status.APPROVED)
-  .reduce((sum, req) => sum + (req.cost || 0), 0);
+    .filter(
+      (r) => r.status === Status.DELIVERED || r.status === Status.APPROVED
+    )
+    .reduce((sum, req) => sum + (req.cost || 0), 0);
 
   const statusData = [
-    { status: 'pending', count: pendingRequests },
-    { status: 'approved', count: filteredRequests.filter(r => r.status === Status.APPROVED).length },
-    { status: 'denied', count: filteredRequests.filter(r => r.status === Status.DENIED).length },
-    { status: 'delivered', count: filteredRequests.filter(r => r.status === Status.DELIVERED).length },
-    { status: 'ordered', count: filteredRequests.filter(r => r.status === Status.ORDERED).length },
-    { status: 'completed', count: filteredRequests.filter(r => r.status === Status.COMPLETED).length }
+    { status: "pending", count: pendingRequests },
+    {
+      status: "approved",
+      count: filteredRequests.filter((r) => r.status === Status.APPROVED)
+        .length,
+    },
+    {
+      status: "denied",
+      count: filteredRequests.filter((r) => r.status === Status.DENIED).length,
+    },
+    {
+      status: "delivered",
+      count: filteredRequests.filter((r) => r.status === Status.DELIVERED)
+        .length,
+    },
+    {
+      status: "ordered",
+      count: filteredRequests.filter((r) => r.status === Status.ORDERED).length,
+    },
+    {
+      status: "completed",
+      count: filteredRequests.filter((r) => r.status === Status.COMPLETED)
+        .length,
+    },
   ];
 
   return (
@@ -125,9 +162,11 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
       {/* Header and filters */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Analytics Dashboard
+          </h2>
           <p className="text-sm text-gray-500">
-            Last updated: {lastUpdated} 
+            Last updated: {lastUpdated}
             {/* <button 
               onClick={handleRefresh}
               className="ml-2 text-[#E31937] hover:text-[#c01731] inline-flex items-center"
@@ -136,31 +175,47 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
             </button> */}
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600 font-medium">Time Range:</span>
           <div className="flex bg-gray-100 p-1 rounded-md">
             <button
               onClick={() => setTimeRange("week")}
-              className={`px-3 py-1 text-xs font-medium rounded ${timeRange === "week" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+              className={`px-3 py-1 text-xs font-medium rounded ${
+                timeRange === "week"
+                  ? "bg-white shadow-sm"
+                  : "hover:bg-gray-200"
+              }`}
             >
               Week
             </button>
             <button
               onClick={() => setTimeRange("month")}
-              className={`px-3 py-1 text-xs font-medium rounded ${timeRange === "month" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+              className={`px-3 py-1 text-xs font-medium rounded ${
+                timeRange === "month"
+                  ? "bg-white shadow-sm"
+                  : "hover:bg-gray-200"
+              }`}
             >
               Month
             </button>
             <button
               onClick={() => setTimeRange("quarter")}
-              className={`px-3 py-1 text-xs font-medium rounded ${timeRange === "quarter" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+              className={`px-3 py-1 text-xs font-medium rounded ${
+                timeRange === "quarter"
+                  ? "bg-white shadow-sm"
+                  : "hover:bg-gray-200"
+              }`}
             >
               Quarter
             </button>
             <button
               onClick={() => setTimeRange("year")}
-              className={`px-3 py-1 text-xs font-medium rounded ${timeRange === "year" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+              className={`px-3 py-1 text-xs font-medium rounded ${
+                timeRange === "year"
+                  ? "bg-white shadow-sm"
+                  : "hover:bg-gray-200"
+              }`}
             >
               Year
             </button>
@@ -169,7 +224,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
       </div>
 
       {/* Key metrics */}
-      <KeyMetricsCards 
+      <KeyMetricsCards
         totalRequests={totalRequests}
         pendingRequests={pendingRequests}
         completedRequests={completedRequests}
@@ -189,9 +244,9 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
               Requests Over Time
             </h3>
           </div>
-          <RequestsOverTimeChart 
-            requests={filteredRequests} 
-            timeRange={timeRange} 
+          <RequestsOverTimeChart
+            requests={filteredRequests}
+            timeRange={timeRange}
           />
         </div>
 
@@ -203,7 +258,10 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
               Request Status Distribution
             </h3>
           </div>
-          <RequestStatusPieChart statusData={statusData} totalRequests={totalRequests}/>
+          <RequestStatusPieChart
+            statusData={statusData}
+            totalRequests={totalRequests}
+          />
         </div>
 
         {/* Request Types */}
@@ -214,7 +272,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
               Request Types
             </h3>
           </div>
-          <RequestTypeBarChart 
+          <RequestTypeBarChart
             supplyCount={supplyRequests}
             maintenanceCount={maintenanceRequests}
             otherCount={otherRequests}

@@ -51,6 +51,16 @@ const RequestModal: React.FC<RequestModalProps> = ({
     >
   ) => {
     const { name, value, type, checked } = e.target;
+    if (name === "orderedAmount") {
+      setFormData((prev) => ({
+        ...prev,
+        cost:
+          (products.find(
+            (product) => product.title === formData.itemName
+          )?.price || 0) * Number(value),
+      }));
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -183,7 +193,7 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   value={(
                     (products.find(
                       (product) => product.title === formData.itemName
-                    )?.price || 0) * formData.requestedAmount
+                    )?.price || 0) * formData.orderedAmount
                   ).toFixed(2)}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
