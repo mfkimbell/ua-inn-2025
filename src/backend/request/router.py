@@ -44,7 +44,7 @@ async def get_request(
     user: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    return read_from_db(db, user, DatabaseRequest)
+    return read_from_db(db, user, DatabaseRequest, sort=True)
 
 
 @router.get("/request/all")
