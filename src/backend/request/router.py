@@ -1,6 +1,6 @@
 import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -81,14 +81,20 @@ async def update_request(
     return update_record(db, DatabaseRequest, request.model_dump())
 
 
-@router.delete("/request")
+class DeleteRequestRequest(BaseModel):
+    request_id: int
+
+
+@router.post("/request/delete")
 async def delete_request(
-    request_id: int,
+    request: DeleteRequestRequest,
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
     db_request = (
-        db.query(DatabaseRequest).filter(DatabaseRequest.id == request_id).first()
+        db.query(DatabaseRequest)
+        .filter(DatabaseRequest.id == request.request_id)
+        .first()
     )
 
     if not db_request:
