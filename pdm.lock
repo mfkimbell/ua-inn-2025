@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = []
 lock_version = "4.5.0"
-content_hash = "sha256:2190edc4c104e41d3ac115c8f8e8bdeccdb9fefd2d39316d4b969b167bd5649a"
+content_hash = "sha256:fe2d9801aa163754b593d63b8ddb6ce8f6fe2780614d4e93de080c8474a465cb"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -423,6 +423,18 @@ files = [
     {file = "SQLAlchemy-2.0.37-cp312-cp312-win_amd64.whl", hash = "sha256:635d8a21577341dfe4f7fa59ec394b346da12420b86624a69e466d446de16aff"},
     {file = "SQLAlchemy-2.0.37-py3-none-any.whl", hash = "sha256:a8998bf9f8658bd3839cbc44ddbe982955641863da0c1efe5b00c1ab4f5c16b1"},
     {file = "sqlalchemy-2.0.37.tar.gz", hash = "sha256:12b28d99a9c14eaf4055810df1001557176716de0167b91026e648e65229bffb"},
+]
+
+[[package]]
+name = "sqlalchemy-cockroachdb"
+version = "2.0.2"
+summary = "CockroachDB dialect for SQLAlchemy"
+dependencies = [
+    "SQLAlchemy",
+]
+files = [
+    {file = "sqlalchemy-cockroachdb-2.0.2.tar.gz", hash = "sha256:119756eb905855d6a11345b99cfe853031a3fe598a9c4bf35a8ddac9f89fe8cc"},
+    {file = "sqlalchemy_cockroachdb-2.0.2-py3-none-any.whl", hash = "sha256:0d5d50e805b024cb2ccd85423a5c1a367d1a56a5cd0ea47765233fd47665070d"},
 ]
 
 [[package]]

@@ -17,6 +17,7 @@ dependencies = [
     "python-multipart>=0.0.20",
     "faker>=37.1.0",
     "psycopg2-binary>=2.9.10",
+    "sqlalchemy-cockroachdb>=2.0.2",
 ]
 requires-python = "==3.12.*"
 
