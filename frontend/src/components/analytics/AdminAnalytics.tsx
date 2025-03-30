@@ -111,6 +111,10 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
     return itemsArray.slice(0, 5);
   }
 
+  const totalSpent = filteredRequests
+  .filter(r => r.status === Status.DELIVERED || r.status === Status.APPROVED)
+  .reduce((sum, req) => sum + (req.cost || 0), 0);
+
   return (
     <div className="space-y-6">
       {/* Header and filters */}
@@ -166,7 +170,8 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
         completedRequests={completedRequests}
         completionRate={completionRate}
         avgResponseTime={avgResponseTime}
-        totalSuggestions={0} // We're not tracking suggestions in this simplified version
+        totalSuggestions={0}
+        totalSpent={totalSpent}
       />
 
       {/* Charts */}
