@@ -1,14 +1,18 @@
-// components/analytics/charts/RequestStatusPieChart.tsx
-import React, { useMemo } from 'react';
-import { Request } from '@/types';
-import { Status } from '@/types/status.enum';
+// Components/analytics/charts/RequestStatusPieChart.tsx
+import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-type RequestStatusPieChartProps = {
-  requests: Request[];
+type StatusData = {
+  status: string;
+  count: number;
 };
 
-const COLORS = {
+type RequestStatusPieChartProps = {
+  statusData: StatusData[];
+  totalRequests: number;
+};
+
+const COLORS: Record<string, string> = {
   'pending': '#f59e0b',     // Amber
   'approved': '#3b82f6',    // Blue
   'denied': '#ef4444',      // Red
@@ -17,31 +21,18 @@ const COLORS = {
   'completed': '#10b981',   // Green
 };
 
-const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ requests }) => {
-  const chartData = useMemo(() => {
-    // Get count of each status
-    const statusCounts: Record<string, number> = {};
-    
-    // Initialize all statuses with 0
-    Object.values(Status).forEach(status => {
-      statusCounts[status] = 0;
+const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ statusData, totalRequests }) => {
+  // Format data for the chart
+  const chartData = statusData
+    .filter(item => item.count > 0) // Only include statuses with requests
+    .map(item => {
+      const statusKey = item.status.toLowerCase();
+      return {
+        name: item.status.charAt(0).toUpperCase() + item.status.slice(1), // Capitalize
+        value: item.count,
+        color: statusKey in COLORS ? COLORS[statusKey] : '#9ca3af' // Type-safe check
+      };
     });
-    
-    // Count occurrences
-    requests.forEach(request => {
-      const status = request.status.toLowerCase();
-      statusCounts[status] = (statusCounts[status] || 0) + 1;
-    });
-    
-    // Convert to array for chart
-    return Object.entries(statusCounts)
-      .filter(([_, count]) => count > 0) // Only include statuses with requests
-      .map(([status, count]) => ({
-        name: status.charAt(0).toUpperCase() + status.slice(1), // Capitalize
-        value: count,
-        color: COLORS[status] || '#9ca3af' // Default color
-      }));
-  }, [requests]);
 
   // Custom renderer for the label
   const renderCustomLabel = ({ 
@@ -78,7 +69,7 @@ const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ requests 
         <div className="bg-white p-2 border border-gray-200 rounded shadow-sm text-xs">
           <p className="font-medium">{data.name}</p>
           <p>Count: {data.value}</p>
-          <p>Percentage: {((data.value / requests.length) * 100).toFixed(1)}%</p>
+          <p>Percentage: {((data.value / totalRequests) * 100).toFixed(1)}%</p>
         </div>
       );
     }

@@ -5,7 +5,7 @@ import {
   PieChart, 
   LineChart,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { Request, Suggestion } from "@/types";
 import { Status } from "@/types/status.enum";
@@ -21,7 +21,7 @@ type AdminAnalyticsProps = {
   suggestions: Suggestion[];
 };
 
-const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("month");
   const [lastUpdated, setLastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
   
@@ -46,6 +46,12 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
   const filteredRequests = requests.filter(request => 
     dayjs(request.createdAt).isAfter(getStartDate())
   );
+
+  const filteredSuggestions = suggestions.filter(suggestion => 
+    dayjs(suggestion.createdAt).isAfter(getStartDate())
+  );
+
+  const suggestionsAmount = filteredSuggestions.length;
 
   // Calculate key metrics
   const totalRequests = filteredRequests.length;
@@ -115,6 +121,15 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
   .filter(r => r.status === Status.DELIVERED || r.status === Status.APPROVED)
   .reduce((sum, req) => sum + (req.cost || 0), 0);
 
+  const statusData = [
+    { status: 'pending', count: pendingRequests },
+    { status: 'approved', count: filteredRequests.filter(r => r.status === Status.APPROVED).length },
+    { status: 'denied', count: filteredRequests.filter(r => r.status === Status.DENIED).length },
+    { status: 'delivered', count: filteredRequests.filter(r => r.status === Status.DELIVERED).length },
+    { status: 'ordered', count: filteredRequests.filter(r => r.status === Status.ORDERED).length },
+    { status: 'completed', count: filteredRequests.filter(r => r.status === Status.COMPLETED).length }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header and filters */}
@@ -170,7 +185,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
         completedRequests={completedRequests}
         completionRate={completionRate}
         avgResponseTime={avgResponseTime}
-        totalSuggestions={0}
+        totalSuggestions={suggestionsAmount}
         totalSpent={totalSpent}
       />
 
@@ -198,7 +213,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
               Request Status Distribution
             </h3>
           </div>
-          <RequestStatusPieChart requests={filteredRequests} />
+          <RequestStatusPieChart statusData={statusData} totalRequests={totalRequests}/>
         </div>
 
         {/* Request Types */}
