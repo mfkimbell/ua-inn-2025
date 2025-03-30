@@ -127,7 +127,6 @@ const RequestModal: React.FC<RequestModalProps> = ({
                   value={formData.itemName}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
                 >
                   <option value="">Select an item</option>
                   {products.map((product) => (
