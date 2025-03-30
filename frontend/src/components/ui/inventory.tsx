@@ -296,6 +296,7 @@ const Inventory: React.FC<InventoryProps> = ({ products }) => {
           onSave={editingProduct ? onUpdateProduct : onAddProduct}
           onClose={() => {
             setEditingProduct(null);
+            setShowAddProductModal(false);
           }}
           product={editingProduct}
         />
