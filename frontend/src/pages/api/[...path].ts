@@ -33,6 +33,7 @@ export default async function handler(
 
     if (method !== "GET" && method !== "DELETE") {
       const contentType = headers.get("Content-Type") as string;
+
       if (contentType?.includes("application/json") && body) {
         forwardedBody = JSON.stringify(body);
       }
@@ -63,7 +64,9 @@ export default async function handler(
       });
     } catch (error: unknown) {
       console.log(
-        `An unexpected error occurred at ${forwardPath} with data: ${forwardedBody}`,
+        `An unexpected error occurred at ${forwardPath} with data: ${JSON.stringify(
+          forwardedBody
+        )}`,
         error
       );
 
@@ -83,7 +86,7 @@ export default async function handler(
           console.error(error.response?.data.detail);
           res
             .status(error.response?.status)
-            .send({ error: `Error: ${error.response?.data.detail}` });
+            .send({ error: `Error: ${JSON.stringify(error.response?.data)}` });
           return;
         }
       }

@@ -50,6 +50,8 @@ def delete_record(db: Session, model: Any, id: int) -> Any:
         db.delete(db_model)
         db.commit()
 
+    return True
+
 
 def create_in_db(db: Session, model: Any, data: Any) -> Any:
     db_model = model(**data)

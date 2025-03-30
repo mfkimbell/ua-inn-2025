@@ -57,13 +57,17 @@ async def update_product(
     return update_record(db, Product, product.model_dump())
 
 
-@router.delete("/product")
+class DeleteProductRequest(BaseModel):
+    product_id: int
+
+
+@router.post("/product/delete")
 async def delete_product(
-    product_id: int,
+    product: DeleteProductRequest,
     _: User = Depends(UserManager.get_user_from_header),
     db: Session = Depends(get_db),
 ):
-    db_product = db.query(Product).filter(Product.id == product_id).first()
+    db_product = db.query(Product).filter(Product.id == product.product_id).first()
 
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")

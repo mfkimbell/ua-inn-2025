@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Head from "next/head";
+import { toast } from "react-toastify";
 import {
   Bell,
   UserCircle,
@@ -133,9 +134,14 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<Suggestion | null>(null);
 
-  const handleDelete = (type: "request" | "suggestion", id: number) => {
+  const handleDelete = async (type: "request" | "suggestion", id: number) => {
     if (type === "request") {
-      setRequests((prev) => prev.filter((item) => item.id !== id));
+      try {
+        await RequestService.deleteRequest(id);
+        setRequests((prev) => prev.filter((item) => item.id !== id));
+      } catch (error) {
+        console.error(error);
+      }
     } else if (type === "suggestion") {
       setSuggestions((prev) => prev.filter((item) => item.id !== id));
     }
