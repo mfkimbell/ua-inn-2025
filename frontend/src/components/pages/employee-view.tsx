@@ -176,6 +176,16 @@ export default function EmployeeView({ products }: PageProps) {
               New Request
             </button>
           )}
+
+          {activeTab === "my-suggestions" && (
+            <button
+              onClick={() => setShowNewSuggestionModal(true)}
+              className="bg-[#E31937] hover:bg-[#c01731] text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
+            >
+              <Plus size={20} className="mr-2" />
+              New Suggestion
+            </button>
+          )}
         </div>
 
         <div className="border-b border-gray-200 mb-6">
