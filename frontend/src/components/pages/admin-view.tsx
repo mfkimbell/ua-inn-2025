@@ -479,7 +479,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             {filteredRequests.map((req) => (
               <div
                 key={req.id}
-                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow flex flex-col h-full"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center">
@@ -500,7 +500,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                   {req.request}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
-                  Submitted by: {req.isAnonymous ? "anonymous" : req.userName}
+                  Submitted by: {req.userName}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
                   Item: {req.itemName}
@@ -525,7 +525,7 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
                     {dayjs(req.updatedAt).format("MMM DD, YYYY hh:mm A")}
                   </div>
                 </div>
-                <div className="flex justify-between items-center mt-4">
+                <div className="mt-auto flex justify-between items-center pt-2">
                   <button
                     onClick={() => {
                       setSelectedRequest(req);
