@@ -5,7 +5,7 @@ import {
   PieChart, 
   LineChart,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { Request, Suggestion } from "@/types";
 import { Status } from "@/types/status.enum";
@@ -21,7 +21,7 @@ type AdminAnalyticsProps = {
   suggestions: Suggestion[];
 };
 
-const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("month");
   const [lastUpdated, setLastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
   
@@ -46,6 +46,12 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
   const filteredRequests = requests.filter(request => 
     dayjs(request.createdAt).isAfter(getStartDate())
   );
+
+  const filteredSuggestions = suggestions.filter(suggestion => 
+    dayjs(suggestion.createdAt).isAfter(getStartDate())
+  );
+
+  const suggestionsAmount = filteredSuggestions.length;
 
   // Calculate key metrics
   const totalRequests = filteredRequests.length;
@@ -170,7 +176,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
         completedRequests={completedRequests}
         completionRate={completionRate}
         avgResponseTime={avgResponseTime}
-        totalSuggestions={0}
+        totalSuggestions={suggestionsAmount}
         totalSpent={totalSpent}
       />
 
