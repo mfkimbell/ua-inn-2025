@@ -11,7 +11,8 @@ https://drive.google.com/file/d/1GSbjWGnQeYZLSXnVpPSrn1_3c7VFLWOJ/view?usp=shari
 
 ## Architechture
 
-<img src="https://github.com/user-attachments/assets/8ae8e413-85f8-4487-af99-0b50463c727a" alt="worksync_arch" width="800" />
+<img src="https://github.com/user-attachments/assets/a219a942-204f-4569-8677-54d1adb15b2e" alt="worksync_arch" width="800" />
+
 
 
 ## Tools
