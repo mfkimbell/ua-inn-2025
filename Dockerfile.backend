@@ -6,6 +6,8 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 # Install Python virtual environment tools
 RUN apt-get update && apt-get install -y sqlite3 postgresql postgresql-contrib
 
+RUN curl --create-dirs -o $HOME/.postgresql/root.crt 'https://cockroachlabs.cloud/clusters/78d95034-a4af-4500-bf34-f639cf317a7d/cert'
+
 # Create and activate a virtual environment
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
