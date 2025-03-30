@@ -5,10 +5,9 @@ import {
   PieChart, 
   LineChart,
   TrendingUp,
-  RefreshCw,
+  RefreshCw
 } from "lucide-react";
-import { Request } from "@/types/request.types";
-import { Suggestion } from "@/types/suggestion.types";
+import { Request, Suggestion } from "@/types";
 import { Status } from "@/types/status.enum";
 import dayjs from "dayjs";
 import RequestsOverTimeChart from "./charts/RequestsOverTimeChart";
@@ -22,7 +21,7 @@ type AdminAnalyticsProps = {
   suggestions: Suggestion[];
 };
 
-const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }) => {
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("month");
   const [lastUpdated, setLastUpdated] = useState<string>(dayjs().format("MMMM D, YYYY h:mm A"));
   
@@ -48,14 +47,8 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
     dayjs(request.createdAt).isAfter(getStartDate())
   );
 
-  // Filter suggestions by date range
-  const filteredSuggestions = suggestions.filter(suggestion => 
-    dayjs(suggestion.createdAt).isAfter(getStartDate())
-  );
-
   // Calculate key metrics
   const totalRequests = filteredRequests.length;
-  const totalSuggestions = filteredSuggestions.length;
   
   const pendingRequests = filteredRequests.filter(r => r.status === Status.PENDING).length;
   const completedRequests = filteredRequests.filter(r => 
@@ -73,13 +66,13 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
   const maintenanceRequests = filteredRequests.filter(r => r.requestType === "maintenance").length;
   const otherRequests = totalRequests - supplyRequests - maintenanceRequests;
 
-  // Generate sample data for top requested items
+  // Generate data for top requested items
   const topItems = getTopRequestedItems(filteredRequests);
 
-  // Handle refresh
+  // Handle refresh - in a real app this would trigger data refetch
   const handleRefresh = () => {
     setLastUpdated(dayjs().format("MMMM D, YYYY h:mm A"));
-    // Add any other refresh logic here if needed
+    // You would typically call a function here to refresh data from API
   };
 
   // Helper function to calculate average response time (in days)
@@ -173,7 +166,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ requests, suggestions }
         completedRequests={completedRequests}
         completionRate={completionRate}
         avgResponseTime={avgResponseTime}
-        totalSuggestions={totalSuggestions}
+        totalSuggestions={0} // We're not tracking suggestions in this simplified version
       />
 
       {/* Charts */}

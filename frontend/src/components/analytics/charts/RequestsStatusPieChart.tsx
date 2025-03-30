@@ -1,6 +1,6 @@
 // components/analytics/charts/RequestStatusPieChart.tsx
 import React, { useMemo } from 'react';
-import { Request } from '@/types/request.types';
+import { Request } from '@/types';
 import { Status } from '@/types/status.enum';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
@@ -9,11 +9,12 @@ type RequestStatusPieChartProps = {
 };
 
 const COLORS = {
-  [Status.PENDING]: '#f59e0b',    // Amber
-  [Status.APPROVED]: '#3b82f6',   // Blue
-  [Status.DENIED]: '#ef4444',     // Red
-  [Status.DELIVERED]: '#10b981',  // Green
-  [Status.ORDERED]: '#8b5cf6',    // Purple
+  'pending': '#f59e0b',     // Amber
+  'approved': '#3b82f6',    // Blue
+  'denied': '#ef4444',      // Red
+  'delivered': '#10b981',   // Green
+  'ordered': '#8b5cf6',     // Purple
+  'completed': '#10b981',   // Green
 };
 
 const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ requests }) => {
@@ -28,7 +29,8 @@ const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ requests 
     
     // Count occurrences
     requests.forEach(request => {
-      statusCounts[request.status] = (statusCounts[request.status] || 0) + 1;
+      const status = request.status.toLowerCase();
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
     });
     
     // Convert to array for chart
@@ -37,7 +39,7 @@ const RequestStatusPieChart: React.FC<RequestStatusPieChartProps> = ({ requests 
       .map(([status, count]) => ({
         name: status.charAt(0).toUpperCase() + status.slice(1), // Capitalize
         value: count,
-        color: COLORS[status as Status] || '#9ca3af' // Default color
+        color: COLORS[status] || '#9ca3af' // Default color
       }));
   }, [requests]);
 

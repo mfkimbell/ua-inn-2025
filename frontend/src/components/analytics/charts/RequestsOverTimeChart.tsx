@@ -1,6 +1,6 @@
 // components/analytics/charts/RequestsOverTimeChart.tsx
 import React, { useMemo } from 'react';
-import { Request } from '@/types/request.types';
+import { Request } from '@/types';
 import dayjs from 'dayjs';
 import {
   LineChart,

@@ -12,17 +12,19 @@ import {
   FileText,
   Wrench,
   Calendar,
+  BarChart2,
 } from "lucide-react";
 import RequestModal from "@/components/ui/request-modal";
 import SuggestionModal from "@/components/ui/suggestion-modal";
 import AuthButton from "../auth/button";
+import Inventory from "../ui/inventory";
+import AdminAnalytics from "@/components/analytics/AdminAnalytics";
 import { Product } from "@/types/product.types";
 import { Status } from "@/types/status.enum";
 import { RequestService } from "@/lib/request-service";
 import { Request } from "@/types/request.types";
 import { Suggestion } from "@/types/suggestion.types";
 import { parseServerRequest } from "@/types";
-import Inventory from "../ui/inventory";
 
 export type PageProps = {
   products: Product[];
@@ -78,7 +80,7 @@ const statusOptions = [
 
 const AdminView: React.FC<PageProps> = ({ products }) => {
   const [activeTab, setActiveTab] = useState<
-    "requests" | "suggestions" | "inventory"
+    "requests" | "suggestions" | "inventory" | "analytics"
   >("requests");
 
   const [requests, setRequests] = useState<Request[]>([]);
@@ -220,7 +222,6 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             </button>
           )}
           {activeTab === "suggestions" && (
-            // If you allow creation, this button can be shown; otherwise, remove it.
             <button
               onClick={() => {
                 setSelectedSuggestion(null);
@@ -266,8 +267,26 @@ const AdminView: React.FC<PageProps> = ({ products }) => {
             >
               Inventory
             </button>
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+                activeTab === "analytics"
+                  ? "border-[#E31937] text-[#E31937]"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <BarChart2 size={16} className="mr-1" />
+              Analytics
+            </button>
           </nav>
         </div>
+
+        {activeTab === "analytics" && (
+          <AdminAnalytics 
+            requests={requests} 
+            suggestions={suggestions}
+          />
+        )}
 
         {/* Filter Panel for Requests */}
         {activeTab === "requests" && (
