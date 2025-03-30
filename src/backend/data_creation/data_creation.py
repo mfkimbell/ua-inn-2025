@@ -6,7 +6,7 @@ from random import choice, randint
 from faker import Faker
 from sqlalchemy.orm import Session
 
-from backend.auth.models import Order, Product, Request, Suggestion, User
+from backend.auth.models import Product, Request, Suggestion, User
 
 fake = Faker()
 
@@ -55,7 +55,11 @@ def insert_test_data(db: Session):
             try:
                 data = json.load(f)
                 for product in data.get("products", []):
-                    if not db.query(Product).filter(Product.id == product["id"]).first():
+                    if (
+                        not db.query(Product)
+                        .filter(Product.id == product["id"])
+                        .first()
+                    ):
                         db.add(
                             Product(
                                 id=product["id"],
@@ -135,25 +139,6 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
             users.append(user)
         db.commit()
 
-    # Create fake orders if none exist
-    orders = db.query(Order).all()
-    if not orders:
-        orders = []
-        for _ in range(num_records):
-            order = Order(
-                user_id=choice(users).id,
-                status=choice(["pending", "processing", "completed", "cancelled"]),
-                created_at=fake.date_time_between(start_date="-1y"),
-                user_name=choice(users).username,
-                cost=randint(50, 300),
-            )
-            order.updated_at = fake.date_time_between(start_date=order.created_at)
-            if order.status == "completed":
-                order.completed_at = fake.date_time_between(start_date=order.updated_at)
-            db.add(order)
-            orders.append(order)
-        db.commit()
-
     # Create fake suggestions using realistic office suggestion texts
     suggestions = db.query(Suggestion).all()
     if not suggestions:
@@ -164,10 +149,14 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name=choice(users).username,
             )
-            suggestion.updated_at = fake.date_time_between(start_date=suggestion.created_at)
+            suggestion.updated_at = fake.date_time_between(
+                start_date=suggestion.created_at
+            )
             # 50% chance of being marked completed
             if randint(0, 1):
-                suggestion.completed_at = fake.date_time_between(start_date=suggestion.updated_at)
+                suggestion.completed_at = fake.date_time_between(
+                    start_date=suggestion.updated_at
+                )
             db.add(suggestion)
         db.commit()
 
@@ -180,7 +169,9 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
             if req_type == "supply":
                 request_text = choice(OFFICE_SUPPLY_REQUESTS)
                 # For supply requests, choose a product title from the available products
-                product = choice(product_list).title if product_list else "Office Supplies"
+                product = (
+                    choice(product_list).title if product_list else "Office Supplies"
+                )
                 item_name = product
             else:
                 request_text = choice(MAINTENANCE_REQUESTS)
@@ -189,7 +180,6 @@ def create_fake_data(db: Session, num_records: int = 50) -> None:
             request = Request(
                 user_id=999,  # using the employee id for test data
                 request=request_text,
-                order_id=choice(orders).id,
                 created_at=fake.date_time_between(start_date="-1y"),
                 user_name="employee",
                 request_type=req_type,

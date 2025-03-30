@@ -49,22 +49,6 @@ class Blacklist(Base):
 
 
 @final
-class Order(Base):
-    __tablename__ = "order"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    user_name = Column(String)  # Regular column, not foreign key
-    status = Column(String, default="pending")
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, default=datetime.now)
-    completed_at = Column(DateTime)
-    comments = Column(String)
-    cost = Column(Float)
-
-    user = relationship("User", backref="orders")  # Relationship to User
-
-
-@final
 class Suggestion(Base):
     __tablename__ = "suggestion"
     id = Column(Integer, primary_key=True, index=True)
@@ -88,7 +72,6 @@ class Request(Base):
     request = Column(String)
     request_type = Column(String, default="supply")  # maintenance | supply
     status = Column(String, default="pending")
-    order_id = Column(Integer, ForeignKey("order.id"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
     comments = Column(String)
