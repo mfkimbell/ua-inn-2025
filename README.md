@@ -1,6 +1,9 @@
 
 ![worksync_logo](https://github.com/user-attachments/assets/b38586f5-7658-4020-9998-0c6eb48cfbae)
 
+## Live Link
+https://worksync-ui-123.web.app/
+
 ## Overview
 
 Built in 24 hours for UA Hackathon 2025. This project automatically provisions inventory and suggestion-tracking workflows on Google Cloud. It leverages Terraform and GitHub Actions to provision Cloud Run, store container images in Artifact Registry, and manage secrets via Secrets Manager. The application features a Next.js frontend (with React, Redux, and NextAuth-style sessions) and a FastAPI backend connected to CockroachDB via SQLAlchemy. The NextJS app is zipped and run in Google Cloud Functions, which Firebase points to. Administrators can manage requests, calculate costs, maintain inventory, and track spending/request data on a dashboard, while end users submit and monitor requests in real time.
